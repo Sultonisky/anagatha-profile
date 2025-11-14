@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: anagatha-profile-app
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      - APP_ENV=${APP_ENV:-local}
+      - APP_DEBUG=${APP_DEBUG:-true}
+      - QUEUE_CONNECTION=database
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-laravel}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-}
+    volumes:
+      - .:/var/www
+      - ./storage:/var/www/storage
+    depends_on:
+      - db
+    networks:
+      - anagatha-network
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: anagatha-profile-queue
+    command: /queue-worker.sh
+    environment:
+      - APP_ENV=${APP_ENV:-local}
+      - APP_DEBUG=${APP_DEBUG:-true}
+      - QUEUE_CONNECTION=database
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-laravel}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-}
+    volumes:
+      - .:/var/www
+      - ./storage:/var/www/storage
+    depends_on:
+      - db
+      - app
+    networks:
+      - anagatha-network
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: anagatha-profile-db
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-laravel}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-}
+      - MYSQL_USER=${DB_USERNAME:-root}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - anagatha-network
+
+networks:
+  anagatha-network:
+    driver: bridge
+
+volumes:
+  db_data:
+
