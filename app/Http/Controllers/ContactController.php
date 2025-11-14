@@ -70,16 +70,28 @@ class ContactController extends Controller
         }
 
         // Try to send email via SMTP (but don't fail if it errors)
+        // Email sending is disabled by default (set ENABLE_CONTACT_EMAIL=true in .env to enable)
         $emailSent = false;
-        try {
-            $recipient = config('mail.from.address', 'info@anagataexecutive.com');
-            Mail::to($recipient)->send(new ContactMessage($data));
-            $emailSent = true;
-        } catch (\Exception $e) {
-            Log::error('Email send error: ' . $e->getMessage(), [
-                'data' => $data,
-            ]);
-            // Continue even if email fails - WhatsApp will still work
+        $emailEnabled = env('ENABLE_CONTACT_EMAIL', false);
+        
+        if ($emailEnabled) {
+            try {
+                // Use MAIL_FROM_ADDRESS as recipient (or set MAIL_TO_ADDRESS in .env)
+                $recipient = env('MAIL_TO_ADDRESS', config('mail.from.address'));
+                Mail::to($recipient)->send(new ContactMessage($data));
+                $emailSent = true;
+                Log::info('Contact form email sent successfully', ['recipient' => $recipient]);
+            } catch (\Exception $e) {
+                Log::error('Email send error: ' . $e->getMessage(), [
+                    'data' => $data,
+                    'recipient' => $recipient ?? 'not set',
+                    'trace' => $e->getTraceAsString(),
+                ]);
+                // Continue even if email fails - WhatsApp will still work
+            }
+        } else {
+            // Email sending is disabled - code remains but won't execute
+            Log::info('Contact form email sending is disabled. Set ENABLE_CONTACT_EMAIL=true in .env to enable.');
         }
 
         // Always return success with WhatsApp URL

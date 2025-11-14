@@ -31,15 +31,29 @@
                 window.open(whatsappUrl, '_blank');
                 // Remove attribute to prevent reopening on refresh
                 formCard.removeAttribute('data-whatsapp-url');
+                return; // Exit early if found
             }
         }
         
         // Fallback: check from window variable (set by Blade)
         if (window.whatsappUrlFromSession) {
             const whatsappUrlFromSession = window.whatsappUrlFromSession;
-            if (whatsappUrlFromSession && !formCard) {
+            if (whatsappUrlFromSession) {
                 window.open(whatsappUrlFromSession, '_blank');
+                // Clear the variable to prevent reopening on refresh
+                window.whatsappUrlFromSession = null;
             }
+        }
+    }
+
+    // Handle form submission - open WhatsApp after redirect
+    function initFormSubmission() {
+        const form = document.querySelector('form[action*="/contact"]');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Form will submit normally, WhatsApp will open after page reloads with session data
+                // This is handled by initWhatsAppRedirect() after page loads
+            });
         }
     }
 
@@ -48,11 +62,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             initAutoHideAlerts();
             initWhatsAppRedirect();
+            initFormSubmission();
         });
     } else {
         // DOM is already ready
         initAutoHideAlerts();
         initWhatsAppRedirect();
+        initFormSubmission();
     }
 })();
 
