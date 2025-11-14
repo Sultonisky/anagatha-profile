@@ -37,14 +37,35 @@ RUN if [ -f "package-lock.json" ]; then npm ci; else npm install; fi && \
     npm run build && \
     rm -rf node_modules
 
-# Cache Laravel config
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# Don't cache config during build (needs .env at runtime)
+# Config will be cached in start script
 
 # Expose port (Railway will set PORT env variable at runtime)
 EXPOSE 8000
 
+# Create startup script
+RUN cat > /start.sh << 'EOF'
+#!/bin/bash
+set -e
+
+# Wait for .env to be available
+if [ ! -f .env ]; then
+    echo "Warning: .env file not found. Creating from .env.example..."
+    cp .env.example .env 2>/dev/null || true
+fi
+
+# Cache Laravel config (only if .env exists)
+if [ -f .env ]; then
+    php artisan config:cache || true
+    php artisan route:cache || true
+    php artisan view:cache || true
+fi
+
+# Start PHP built-in server
+exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+EOF
+RUN chmod +x /start.sh
+
 # Start PHP built-in server (Railway sets PORT automatically)
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+CMD ["/start.sh"]
 
