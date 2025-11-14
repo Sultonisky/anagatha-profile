@@ -287,6 +287,6 @@
                 window.whatsappUrlFromSession = @json(session('whatsapp_url'));
             </script>
         @endif
-        <script src="{{ asset('js/contact-form.js') }}"></script>
+        <script src="/js/contact-form.js"></script>
     @endpush
 @endsection
