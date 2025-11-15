@@ -14,7 +14,7 @@
         <div class="footer-contacts">
             <p class="footer-contact">
                 <i class="fa-solid fa-envelope"></i>
-                <span>info@anagataexecutive.com</span>
+                <span>info@anagataexecutive.co.id</span>
             </p>
             <p class="footer-contact">
                 <i class="fa-solid fa-phone"></i>
