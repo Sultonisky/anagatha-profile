@@ -9,12 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class ContactController extends Controller
 {
-    protected GoogleSheetService $googleSheetService;
-
-    public function __construct(GoogleSheetService $googleSheetService)
-    {
-        $this->googleSheetService = $googleSheetService;
-    }
+    // GoogleSheetService will be resolved lazily to handle configuration errors gracefully
 
     /**
      * Display a listing of the resource.
@@ -65,11 +60,30 @@ class ContactController extends Controller
         ];
 
         // Submit directly to Google Sheets via Service Account
-        $submitted = $this->googleSheetService->appendContact($data);
-        $statusMessage = $submitted
-            ? 'Thank you, your message has been received and successfully logged to our system.'
-            : 'We received your message, but there was an issue logging it to our system. Our team will follow up manually.';
-        $toastType = $submitted ? 'success' : 'error';
+        try {
+            // Resolve service lazily to catch constructor exceptions
+            $googleSheetService = app(GoogleSheetService::class);
+            $submitted = $googleSheetService->appendContact($data);
+            $statusMessage = $submitted
+                ? 'Thank you, your message has been received and successfully logged to our system.'
+                : 'We received your message, but there was an issue logging it to our system. Our team will follow up manually.';
+            $toastType = $submitted ? 'success' : 'error';
+        } catch (\RuntimeException $e) {
+            // Handle configuration errors (missing credentials or env vars)
+            Log::error('Google Sheets configuration error: ' . $e->getMessage(), [
+                'data' => $data,
+            ]);
+            $statusMessage = 'We received your message, but there was a configuration issue. Our team will follow up manually.';
+            $toastType = 'error';
+        } catch (\Throwable $e) {
+            // Handle any other errors
+            Log::error('Google Sheets error: ' . $e->getMessage(), [
+                'data' => $data,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $statusMessage = 'We received your message, but there was an issue logging it to our system. Our team will follow up manually.';
+            $toastType = 'error';
+        }
 
         return back()
             ->with('status', $statusMessage)
