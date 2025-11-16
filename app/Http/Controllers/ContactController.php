@@ -70,15 +70,23 @@ class ContactController extends Controller
             $toastType = $submitted ? 'success' : 'error';
         } catch (\RuntimeException $e) {
             // Handle configuration errors (missing credentials or env vars)
-            Log::error('Google Sheets configuration error: ' . $e->getMessage(), [
+            $errorMsg = $e->getMessage();
+            Log::error('Google Sheets configuration error: ' . $errorMsg, [
                 'data' => $data,
+                'spreadsheet_id' => config('google_sheets.spreadsheet_id'),
+                'sheet_name' => config('google_sheets.sheet_name'),
             ]);
             $statusMessage = 'We received your message, but there was a configuration issue. Our team will follow up manually.';
             $toastType = 'error';
         } catch (\Throwable $e) {
             // Handle any other errors
-            Log::error('Google Sheets error: ' . $e->getMessage(), [
+            $errorMsg = $e->getMessage();
+            Log::error('Google Sheets error: ' . $errorMsg, [
                 'data' => $data,
+                'class' => get_class($e),
+                'code' => $e->getCode(),
+                'spreadsheet_id' => config('google_sheets.spreadsheet_id'),
+                'sheet_name' => config('google_sheets.sheet_name'),
                 'trace' => $e->getTraceAsString(),
             ]);
             $statusMessage = 'We received your message, but there was an issue logging it to our system. Our team will follow up manually.';
