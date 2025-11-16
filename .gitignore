@@ -26,3 +26,7 @@ yarn.lock
 .node_repl_history
 *.log
 .DS_Store
+
+# Google credentials
+/storage/app/google/*.json
+/storage/app/google/credentials.json
