@@ -1,58 +1,119 @@
 /**
  * Contact Form JavaScript
- * Handles auto-hide alerts and WhatsApp redirect
+ * Handles toast + auto-hide alerts
  */
 
 (function() {
     'use strict';
 
-    // Auto-hide alerts after 5 seconds
-    function initAutoHideAlerts() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
-            setTimeout(function() {
-                alert.style.transition = 'opacity 0.5s ease-out';
-                alert.style.opacity = '0';
-                setTimeout(function() {
-                    alert.remove();
-                }, 500);
-            }, 5000); // Hide after 5 seconds
+    function initToast() {
+        const toastStack = document.querySelector('[data-toast]');
+        if (!toastStack) return;
+
+        const toast = toastStack.querySelector('.toast');
+        if (!toast) return;
+
+        // Show with small delay for smooth entrance
+        requestAnimationFrame(function () {
+            toast.classList.add('toast--visible');
+        });
+
+        const autoHideMs = 5000;
+        const hide = function () {
+            toast.classList.add('toast--hiding');
+            setTimeout(function () {
+                toast.remove();
+            }, 350);
+        };
+
+        // Auto hide
+        const timer = setTimeout(hide, autoHideMs);
+
+        // Close button
+        const closeBtn = toast.querySelector('.toast__close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                clearTimeout(timer);
+                hide();
+            });
+        }
+    }
+
+    function initFormGuard() {
+        const form = document.querySelector('.card--form form');
+        if (!form) return;
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (!submitBtn) return;
+
+        const requiredFields = [
+            form.querySelector('#first_name'),
+            form.querySelector('#last_name'),
+            form.querySelector('#email'),
+            form.querySelector('#message')
+        ];
+
+        function isEmailValid(value) {
+            if (!value) return false;
+            const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return pattern.test(String(value).toLowerCase());
+        }
+
+        function updateSubmitState() {
+            const [firstName, lastName, email, message] = requiredFields;
+
+            const allFilled = requiredFields.every(function (el) {
+                return el && el.value && el.value.trim().length > 0;
+            });
+
+            const emailOk = isEmailValid(email ? email.value : '');
+            const isValid = allFilled && emailOk;
+
+            submitBtn.disabled = !isValid;
+            submitBtn.classList.toggle('is-disabled', !isValid);
+        }
+
+        // Initial state
+        updateSubmitState();
+
+        requiredFields.forEach(function (el) {
+            if (!el) return;
+            el.addEventListener('input', updateSubmitState);
+            el.addEventListener('blur', updateSubmitState);
+        });
+
+        form.addEventListener('submit', function () {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('is-disabled');
         });
     }
 
-    // Open WhatsApp after successful form submission
-    function initWhatsAppRedirect() {
-        // Check from data attribute first (more reliable)
-        const formCard = document.querySelector('.card--form[data-whatsapp-url]');
-        if (formCard) {
-            const whatsappUrl = formCard.getAttribute('data-whatsapp-url');
-            if (whatsappUrl) {
-                // Open WhatsApp immediately
-                window.open(whatsappUrl, '_blank');
-                // Remove attribute to prevent reopening on refresh
-                formCard.removeAttribute('data-whatsapp-url');
-            }
-        }
-        
-        // Fallback: check from window variable (set by Blade)
-        if (window.whatsappUrlFromSession) {
-            const whatsappUrlFromSession = window.whatsappUrlFromSession;
-            if (whatsappUrlFromSession && !formCard) {
-                window.open(whatsappUrlFromSession, '_blank');
-            }
-        }
+    // Fallback: auto-hide legacy alerts if any
+    function initAutoHideAlerts() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function (alert) {
+            setTimeout(function () {
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(function () {
+                    alert.remove();
+                }, 500);
+            }, 5000);
+        });
     }
 
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
+            initToast();
+            initFormGuard();
             initAutoHideAlerts();
-            initWhatsAppRedirect();
         });
     } else {
         // DOM is already ready
+        initToast();
+        initFormGuard();
         initAutoHideAlerts();
-        initWhatsAppRedirect();
     }
 })();
 

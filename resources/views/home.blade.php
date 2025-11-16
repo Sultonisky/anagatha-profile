@@ -4,6 +4,29 @@
 @section('body_class', 'page home-page')
 
 @section('content')
+    @if (session('status'))
+        <div class="toast-stack" data-toast>
+            <div class="toast toast--{{ session('toast_type', 'success') }}" role="status" aria-live="polite">
+                <div class="toast__icon">
+                    @if (session('toast_type', 'success') === 'success')
+                        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                    @else
+                        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    @endif
+                </div>
+                <div class="toast__body">
+                    <p class="toast__title">
+                        {{ session('toast_type', 'success') === 'success' ? 'Success' : 'Something went wrong' }}
+                    </p>
+                    <p class="toast__message">{{ session('status') }}</p>
+                </div>
+                <button type="button" class="toast__close" aria-label="Tutup notifikasi">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    @endif
+
     <section id="hero" class="hero home-hero">
         <div class="container hero__layout">
             <div class="hero-text" data-aos="fade-right">
@@ -188,22 +211,14 @@
                     today</p>
             </div>
             <div class="contact-section__grid">
-                <div class="card card--form" data-aos="fade-up" data-aos-delay="100"
-                    @if (session('whatsapp_url')) data-whatsapp-url="{{ session('whatsapp_url') }}" @endif>
-                    @if (session('status'))
-                        <div class="alert alert--success" role="status">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    @if (session('error'))
-                        <div class="alert alert--error" role="alert">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
+                <div class="card card--form" data-aos="fade-up" data-aos-delay="100">
                     <form action="{{ url('/contact') }}" method="POST" novalidate>
                         @csrf
+                        {{-- Honeypot field for spam bots --}}
+                        <div class="sr-only" aria-hidden="true">
+                            <label for="company">Company</label>
+                            <input id="company" type="text" name="company" tabindex="-1" autocomplete="off">
+                        </div>
                         <div class="form-grid">
                             <div class="form-field">
                                 <label for="first_name">First Name</label>

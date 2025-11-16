@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ContactMessage;
-use App\Services\WhatsAppService;
+use App\Services\GoogleSheetService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
-    protected WhatsAppService $whatsappService;
+    protected GoogleSheetService $googleSheetService;
 
-    public function __construct(WhatsAppService $whatsappService)
+    public function __construct(GoogleSheetService $googleSheetService)
     {
-        $this->whatsappService = $whatsappService;
+        $this->googleSheetService = $googleSheetService;
     }
 
     /**
@@ -39,12 +37,23 @@ class ContactController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Honeypot field - real users should leave this empty
+        if (!empty($request->input('company'))) {
+            Log::warning('Contact form honeypot triggered', [
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+            return back()
+                ->with('status', 'We received your message.')
+                ->with('toast_type', 'success');
+        }
+
         $validated = $request->validate([
-            'first_name' => ['required', 'string', 'max:60'],
-            'last_name' => ['required', 'string', 'max:60'],
+            'first_name' => ['required', 'string', 'min:2', 'max:60'],
+            'last_name' => ['required', 'string', 'min:2', 'max:60'],
             'email' => ['required', 'email', 'max:150'],
             'phone' => ['nullable', 'string', 'max:50'],
-            'message' => ['required', 'string', 'max:2000'],
+            'message' => ['required', 'string', 'min:10', 'max:2000'],
         ]);
 
         // Combine first_name and last_name into name
@@ -55,42 +64,16 @@ class ContactController extends Controller
             'message' => $validated['message'],
         ];
 
-        // Generate WhatsApp URL (always generate, even if email fails)
-        $whatsappPhone = config('whatsapp.recipient_phone');
-        $whatsappUrl = null;
-        if (!empty($whatsappPhone)) {
-            try {
-                $whatsappMessage = $this->whatsappService->formatContactMessage($data);
-                $whatsappUrl = $this->whatsappService->generateWhatsAppUrl($whatsappPhone, $whatsappMessage);
-            } catch (\Exception $e) {
-                Log::error('WhatsApp URL generation error: ' . $e->getMessage());
-            }
-        } else {
-            Log::warning('WhatsApp recipient phone not configured. Please set WHATSAPP_RECIPIENT_PHONE in .env');
-        }
-
-        // Try to send email via SMTP (but don't fail if it errors)
-        $emailSent = false;
-        try {
-            $recipient = config('mail.from.address', 'info@anagataexecutive.com');
-            Mail::to($recipient)->send(new ContactMessage($data));
-            $emailSent = true;
-        } catch (\Exception $e) {
-            Log::error('Email send error: ' . $e->getMessage(), [
-                'data' => $data,
-            ]);
-            // Continue even if email fails - WhatsApp will still work
-        }
-
-        // Always return success with WhatsApp URL
-        $statusMessage = 'Pesan Anda telah kami terima. Tim kami akan segera menghubungi Anda.';
-        if (!$emailSent && $whatsappUrl) {
-            $statusMessage = 'Pesan Anda telah kami terima. Silakan lanjutkan melalui WhatsApp.';
-        }
+        // Submit directly to Google Sheets via Service Account
+        $submitted = $this->googleSheetService->appendContact($data);
+        $statusMessage = $submitted
+            ? 'Thank you, your message has been received and successfully logged to our system.'
+            : 'We received your message, but there was an issue logging it to our system. Our team will follow up manually.';
+        $toastType = $submitted ? 'success' : 'error';
 
         return back()
             ->with('status', $statusMessage)
-            ->with('whatsapp_url', $whatsappUrl);
+            ->with('toast_type', $toastType);
     }
 
     /**

@@ -14,11 +14,11 @@
         <div class="footer-contacts">
             <p class="footer-contact">
                 <i class="fa-solid fa-envelope"></i>
-                <span>info@anagataexecutive.com</span>
+                <a href="mailto:info@anagataexecutive.co.id">info@anagataexecutive.co.id</a>
             </p>
             <p class="footer-contact">
                 <i class="fa-solid fa-phone"></i>
-                <span>+62 [Phone Number]</span>
+                <a href="https://wa.me/6281234567890" target="_blank" rel="noopener">+62 812-3456-7890</a>
             </p>
         </div>
     </div>
