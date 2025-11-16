@@ -30,3 +30,4 @@ yarn.lock
 # Google credentials
 /storage/app/google/*.json
 /storage/app/google/credentials.json
+!/storage/app/google/.gitkeep
