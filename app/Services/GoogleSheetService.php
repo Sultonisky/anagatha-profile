@@ -20,17 +20,33 @@ class GoogleSheetService
         $this->sheetName = (string) config('google_sheets.sheet_name', 'Sheet1');
 
         if (empty($credentialsPath) || !file_exists($credentialsPath)) {
+            Log::error('Google Sheets credentials file not found', [
+                'path' => $credentialsPath,
+                'exists' => file_exists($credentialsPath),
+            ]);
             throw new \RuntimeException('Google credentials.json not found at: ' . $credentialsPath);
         }
         if (empty($this->spreadsheetId)) {
+            Log::error('Google Sheets configuration missing', [
+                'spreadsheet_id' => $this->spreadsheetId,
+                'sheet_name' => $this->sheetName,
+            ]);
             throw new \RuntimeException('Missing GOOGLE_SHEET_ID in environment.');
         }
 
-        $client = new Client();
-        $client->setAuthConfig($credentialsPath);
-        $client->setScopes([Sheets::SPREADSHEETS]);
+        try {
+            $client = new Client();
+            $client->setAuthConfig($credentialsPath);
+            $client->setScopes([Sheets::SPREADSHEETS]);
 
-        $this->sheetsService = new Sheets($client);
+            $this->sheetsService = new Sheets($client);
+        } catch (\Throwable $e) {
+            Log::error('Google Sheets client initialization error', [
+                'error' => $e->getMessage(),
+                'path' => $credentialsPath,
+            ]);
+            throw new \RuntimeException('Failed to initialize Google Sheets client: ' . $e->getMessage());
+        }
     }
 
     public function appendContact(array $data): bool
