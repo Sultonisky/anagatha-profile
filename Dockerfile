@@ -118,6 +118,9 @@ php artisan config:clear 2>&1 || true
 php artisan route:clear 2>&1 || true
 php artisan view:clear 2>&1 || true
 
+# Regenerate autoload to ensure all classes are available
+composer dump-autoload --optimize --no-interaction 2>&1 || echo "Warning: composer dump-autoload failed, continuing..."
+
 # Cache Laravel config (only if .env exists and valid)
 if [ -f .env ]; then
     echo "Caching Laravel configuration..."
