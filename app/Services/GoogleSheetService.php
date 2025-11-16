@@ -58,8 +58,27 @@ class GoogleSheetService
                 $params
             );
             return true;
+        } catch (\Google\Service\Exception $e) {
+            // Google API specific errors
+            $errorDetails = json_decode($e->getMessage(), true);
+            $errorMessage = $e->getMessage();
+            if (isset($errorDetails['error']['message'])) {
+                $errorMessage = $errorDetails['error']['message'];
+            }
+            Log::error('Google Sheets API error: ' . $errorMessage, [
+                'code' => $e->getCode(),
+                'data' => $data,
+                'spreadsheet_id' => $this->spreadsheetId,
+                'sheet_name' => $this->sheetName,
+            ]);
+            return false;
         } catch (\Throwable $e) {
-            Log::error('Google Sheets append error: ' . $e->getMessage());
+            Log::error('Google Sheets append error: ' . $e->getMessage(), [
+                'class' => get_class($e),
+                'code' => $e->getCode(),
+                'data' => $data,
+                'trace' => $e->getTraceAsString(),
+            ]);
             return false;
         }
     }
