@@ -7,6 +7,11 @@ use Google\Service\Sheets;
 use Google\Service\Sheets\ValueRange;
 use Illuminate\Support\Facades\Log;
 
+// Ensure Google API Client is autoloaded
+if (!class_exists('Google\Client')) {
+    require_once __DIR__ . '/../../vendor/autoload.php';
+}
+
 class GoogleSheetService
 {
     private Sheets $sheetsService;
