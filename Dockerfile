@@ -105,8 +105,14 @@ php artisan migrate --force 2>&1 || echo "Warning: migrate failed, continuing...
 # This ensures Laravel reads from environment variables, not cached .env values
 if [ -f .env ]; then
     echo "Caching Laravel configuration (after env vars injected)..."
-    php artisan config:cache 2>&1 || echo "Warning: config:cache failed, continuing..."
-    php artisan route:cache 2>&1 || echo "Warning: route:cache failed, continuing..."
+    php artisan config:cache 2>&1 || {
+        echo "WARNING: config:cache failed, clearing and continuing without cache..."
+        php artisan config:clear 2>&1 || true
+    }
+    php artisan route:cache 2>&1 || {
+        echo "WARNING: route:cache failed, clearing route cache..."
+        php artisan route:clear 2>&1 || true
+    }
     php artisan view:cache 2>&1 || echo "Warning: view:cache failed, continuing..."
 fi
 
@@ -115,18 +121,32 @@ chmod -R 775 storage bootstrap/cache 2>&1 || true
 chown -R www-data:www-data storage bootstrap/cache 2>&1 || true
 
 # Start PHP built-in server
-echo "Starting PHP built-in server on port ${PORT:-8000}..."
-echo "Server will be available at http://0.0.0.0:${PORT:-8000}"
+PORT=${PORT:-8000}
+echo "=========================================="
+echo "Starting Laravel application server"
+echo "PORT: $PORT"
+echo "=========================================="
 
 # Verify the server can start (test command)
+echo "Verifying PHP and Laravel installation..."
 php artisan --version || {
     echo "ERROR: php artisan command failed!"
     exit 1
 }
 
+# Test if we can access the health endpoint (basic check)
+echo "Testing application bootstrap..."
+php artisan route:list --path=health 2>&1 | head -5 || echo "Route list check completed"
+
 # Start PHP built-in server (use exec to replace shell process)
 # This ensures the process runs as PID 1 and receives signals properly
-exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+echo "Starting PHP built-in server on 0.0.0.0:$PORT..."
+echo "Server will be available at http://0.0.0.0:$PORT"
+echo "Health check endpoint: http://0.0.0.0:$PORT/health"
+echo "=========================================="
+
+# Use exec to replace shell process and ensure proper signal handling
+exec php artisan serve --host=0.0.0.0 --port=$PORT
 EOF
 RUN chmod +x /start.sh
 
