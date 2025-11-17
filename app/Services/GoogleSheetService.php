@@ -40,6 +40,11 @@ class GoogleSheetService
         }
 
         try {
+            // Ensure autoload is loaded
+            if (!class_exists('Google\Client')) {
+                require_once base_path('vendor/autoload.php');
+            }
+            
             $client = new Client();
             $client->setAuthConfig($credentialsPath);
             $client->setScopes([Sheets::SPREADSHEETS]);
@@ -48,7 +53,10 @@ class GoogleSheetService
         } catch (\Throwable $e) {
             Log::error('Google Sheets client initialization error', [
                 'error' => $e->getMessage(),
+                'class' => get_class($e),
                 'path' => $credentialsPath,
+                'client_exists' => class_exists('Google\Client'),
+                'sheets_exists' => class_exists('Google\Service\Sheets'),
             ]);
             throw new \RuntimeException('Failed to initialize Google Sheets client: ' . $e->getMessage());
         }
