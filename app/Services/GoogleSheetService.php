@@ -20,17 +20,32 @@ class GoogleSheetService
 
     public function __construct()
     {
-        $credentials = json_decode(env('GOOGLE_CREDENTIALS_JSON'), true); // absolute path
+        // GOOGLE_CREDENTIALS_JSON contains the JSON string directly, not a file path
+        $credentialsJson = env('GOOGLE_CREDENTIALS_JSON');
+        $credentials = $credentialsJson ? json_decode($credentialsJson, true) : null;
+        
         $this->spreadsheetId = (string) config('google_sheets.spreadsheet_id', '');
         $this->sheetName = (string) config('google_sheets.sheet_name', 'Sheet1');
 
-        if (empty($credentialsPath) || !file_exists($credentialsPath)) {
-            Log::error('Google Sheets credentials file not found', [
-                'path' => $credentialsPath,
-                'exists' => file_exists($credentialsPath),
+        // Validate credentials JSON
+        if (empty($credentials) || !is_array($credentials)) {
+            Log::error('Google Sheets credentials invalid or missing', [
+                'has_json' => !empty($credentialsJson),
+                'json_valid' => json_last_error() === JSON_ERROR_NONE,
+                'json_error' => json_last_error_msg(),
             ]);
-            throw new \RuntimeException('Google credentials.json not found at: ' . $credentialsPath);
+            throw new \RuntimeException('GOOGLE_CREDENTIALS_JSON is missing or invalid. Please check your environment configuration.');
         }
+        
+        // Validate required credential fields
+        if (empty($credentials['client_email']) || empty($credentials['private_key'])) {
+            Log::error('Google Sheets credentials missing required fields', [
+                'has_client_email' => !empty($credentials['client_email']),
+                'has_private_key' => !empty($credentials['private_key']),
+            ]);
+            throw new \RuntimeException('Google credentials are missing required fields (client_email or private_key).');
+        }
+        
         if (empty($this->spreadsheetId)) {
             Log::error('Google Sheets configuration missing', [
                 'spreadsheet_id' => $this->spreadsheetId,
@@ -54,7 +69,7 @@ class GoogleSheetService
             Log::error('Google Sheets client initialization error', [
                 'error' => $e->getMessage(),
                 'class' => get_class($e),
-                'path' => $credentialsPath,
+                'has_credentials' => !empty($credentials),
                 'client_exists' => class_exists('Google\Client'),
                 'sheets_exists' => class_exists('Google\Service\Sheets'),
             ]);
