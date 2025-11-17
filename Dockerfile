@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.2
 
 # Install system dependencies dan Node.js
 RUN apt-get update && apt-get install -y \
@@ -117,8 +117,16 @@ chown -R www-data:www-data storage bootstrap/cache 2>&1 || true
 # Start PHP built-in server
 echo "Starting PHP built-in server on port ${PORT:-8000}..."
 echo "Server will be available at http://0.0.0.0:${PORT:-8000}"
+
+# Verify the server can start (test command)
+php artisan --version || {
+    echo "ERROR: php artisan command failed!"
+    exit 1
+}
+
 # Start PHP built-in server (use exec to replace shell process)
-exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000} 2>&1
+# This ensures the process runs as PID 1 and receives signals properly
+exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
 EOF
 RUN chmod +x /start.sh
 
