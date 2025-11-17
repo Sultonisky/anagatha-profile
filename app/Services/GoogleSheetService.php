@@ -20,7 +20,7 @@ class GoogleSheetService
 
     public function __construct()
     {
-        $credentialsPath = storage_path('app/google/credentials.json'); // absolute path
+        $credentials = json_decode(env('GOOGLE_CREDENTIALS_JSON'), true); // absolute path
         $this->spreadsheetId = (string) config('google_sheets.spreadsheet_id', '');
         $this->sheetName = (string) config('google_sheets.sheet_name', 'Sheet1');
 
@@ -46,7 +46,7 @@ class GoogleSheetService
             }
             
             $client = new Client();
-            $client->setAuthConfig($credentialsPath);
+            $client->setAuthConfig($credentials);
             $client->setScopes([Sheets::SPREADSHEETS]);
 
             $this->sheetsService = new Sheets($client);
