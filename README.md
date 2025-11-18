@@ -1,66 +1,226 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Anagata Executive
+
+<div align="center">
+  <img src="public/assets/hero-sec.png" alt="Anagata Executive - Where Talent Thrives & Culture Elevates" width="600">
+</div>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <strong>Where Talent Thrives & Culture Elevates</strong>
 </p>
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Anagata Executive is a modern, data-driven Human Resources Recruitment Agency platform built with Laravel. We specialize in connecting exceptional talent with remarkable opportunities through cutting-edge technology, data-driven insights, and human expertise. Our platform delivers comprehensive recruitment solutions tailored to organizations' unique needs, from executive leadership placements to specialized talent pipelines.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+### Core Functionality
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Professional Landing Page**: Elegant, responsive design showcasing our services and value proposition
+- **Contact Form Integration**: Secure contact form with Google Sheets integration for lead management
+- **Data-Driven Approach**: Leverages analytics and insights for informed recruitment decisions
+- **Security First**: Built-in XSS protection, honeypot spam prevention, and input validation
+- **Modern UI/UX**: Clean, professional interface with smooth animations and intuitive navigation
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Services Highlighted
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Executive Search & Leadership Placement**: Specialized recruitment for C-level and senior positions
+- **Culture Fit Recruitment**: Matching talent with organizational culture for growing startups
+- **Talent Pipeline Development**: Building specialized talent pools for niche roles
 
-## Laravel Sponsors
+## Technology Stack
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Framework**: Laravel 10.x
+- **PHP**: 8.1+
+- **Frontend**: Blade Templates, Vanilla JavaScript, Custom CSS
+- **Integrations**: 
+  - Google Sheets API (for contact form submissions)
+  - Google API Client 2.18
+- **Security**: Laravel Sanctum, CSRF Protection, Rate Limiting
+- **HTTP Client**: Guzzle 7.2+
 
-### Premium Partners
+## Requirements
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- PHP >= 8.1
+- Composer
+- Node.js & NPM (for asset compilation)
+- Google Cloud Service Account (for Google Sheets integration)
+- Web server (Apache/Nginx) or PHP built-in server
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd anagatha-profile
+```
+
+### 2. Install Dependencies
+
+```bash
+composer install
+npm install
+```
+
+### 3. Environment Configuration
+
+Copy the `.env.example` file to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Generate the application key:
+
+```bash
+php artisan key:generate
+```
+
+### 4. Configure Google Sheets Integration
+
+To enable contact form submissions to Google Sheets, configure the following in your `.env` file:
+
+```env
+GOOGLE_CREDENTIALS_JSON={"type":"service_account",...}
+# OR
+GOOGLE_CREDENTIALS_BASE64=<base64-encoded-credentials>
+# OR
+GOOGLE_CREDENTIALS_PATH=/path/to/credentials.json
+
+GOOGLE_SPREADSHEET_ID=your-spreadsheet-id
+GOOGLE_SHEET_NAME=Sheet1
+```
+
+Place your Google Service Account credentials JSON file in `storage/app/google/credentials.json` or configure one of the environment variables above.
+
+### 5. Database Setup (if applicable)
+
+```bash
+php artisan migrate
+```
+
+### 6. Build Assets
+
+```bash
+npm run build
+# or for development
+npm run dev
+```
+
+### 7. Start the Development Server
+
+```bash
+php artisan serve
+```
+
+Visit `http://localhost:8000` in your browser.
+
+## Project Structure
+
+```
+anagatha-profile/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── ContactController.php    # Handles contact form submissions
+│   │   │   └── PageController.php       # Handles page routing
+│   │   └── Middleware/                  # CSRF and security middleware
+│   └── Services/
+│       └── GoogleSheetService.php        # Google Sheets integration service
+├── public/
+│   ├── assets/
+│   │   └── hero-sec.png                 # Hero section image
+│   ├── js/
+│   │   ├── contact-form.js              # Contact form JavaScript
+│   │   └── navbar.js                    # Navigation JavaScript
+│   └── styles/
+│       └── style.css                    # Main stylesheet
+├── resources/
+│   └── views/
+│       ├── home.blade.php               # Main landing page
+│       └── layouts/
+│           └── app.blade.php           # Main layout template
+└── routes/
+    └── web.php                          # Web routes
+```
+
+## Security Features
+
+- **XSS Protection**: Comprehensive input sanitization and validation
+- **CSRF Protection**: Laravel's built-in CSRF token validation
+- **Honeypot Field**: Spam bot detection in contact forms
+- **Rate Limiting**: Contact form submissions limited to 5 per minute
+- **Input Validation**: Strict validation rules for all user inputs
+- **SQL Injection Prevention**: Laravel's Eloquent ORM with parameter binding
+
+## Contact Form
+
+The contact form includes:
+
+- First Name & Last Name validation
+- Email validation
+- Optional phone number
+- Message field (10-2000 characters)
+- Automatic submission to Google Sheets
+- Toast notifications for user feedback
+- Comprehensive error handling
+
+## Deployment
+
+This application is configured for deployment on:
+
+- **Railway**: Includes `railway.json` configuration
+- **Render**: Includes `render.yaml` configuration
+- **Vercel**: Includes `vercel.json` configuration
+- **Docker**: Includes `Dockerfile` and `docker-compose.yml`
+
+### Environment Variables for Production
+
+Ensure the following are set in your production environment:
+
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- `APP_KEY` (generated application key)
+- Google Sheets credentials (as configured above)
+- `GOOGLE_SPREADSHEET_ID`
+- `GOOGLE_SHEET_NAME`
+
+## Development
+
+### Code Style
+
+This project uses Laravel Pint for code formatting:
+
+```bash
+./vendor/bin/pint
+```
+
+### Testing
+
+Run the test suite:
+
+```bash
+php artisan test
+```
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+This is a private project for Anagata Executive. For internal contributions, please follow the existing code style and ensure all tests pass before submitting changes.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is proprietary software. All rights reserved.
+
+## Support
+
+For technical support or inquiries, please contact the development team.
+
+---
+
+<div align="center">
+  <p><strong>Anagata Executive</strong> - Excellence in Talent Acquisition</p>
+  <p>Where Data Meet Talent</p>
+</div>
