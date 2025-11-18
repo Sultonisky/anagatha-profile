@@ -28,7 +28,7 @@ class GoogleSheetService
             ]);
             throw new \RuntimeException('Google credentials are missing required fields (client_email or private_key).');
         }
-        
+
         if (empty($this->spreadsheetId)) {
             Log::error('Google Sheets configuration missing', [
                 'spreadsheet_id' => $this->spreadsheetId,
@@ -119,7 +119,7 @@ class GoogleSheetService
                 $data['email'] ?? '',
                 $data['phone'] ?? '',
                 $data['message'] ?? '',
-                now()->toDateTimeString(),
+                now('Asia/Jakarta')->toDateTimeString(),
             ]];
 
             $body = new ValueRange([
@@ -151,9 +151,12 @@ class GoogleSheetService
             ]);
             return false;
         } catch (\Throwable $e) {
-            Log::error('Google Sheets append error: ' . $e->getMessage(), [
+            Log::error('Google Sheets append error', [
+                'message' => $e->getMessage(),
                 'class' => get_class($e),
                 'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'data' => $data,
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -161,5 +164,3 @@ class GoogleSheetService
         }
     }
 }
-
-
