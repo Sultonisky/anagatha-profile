@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Anagata Executive')</title>
-    <meta name="description"
-        content="Anagata Executive - Where Data Meet Talent. Headhunting, training, and outsourcing solutions powered by data-driven insights.">
+    <title>@yield('title', __('app.meta.title'))</title>
+    <meta name="description" content="{{ __('app.meta.description') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Anagata Executive | Where Data Meet Talent')
+@section('title', __('app.meta.title'))
 @section('body_class', 'page home-page')
 
 @section('content')
@@ -19,16 +19,16 @@
                 <div class="toast__body">
                     <p class="toast__title">
                         @if (session('toast_type', 'success') === 'success')
-                            Success
+                            {{ __('app.toast.success') }}
                         @elseif (session('toast_type') === 'warning')
-                            Warning
+                            {{ __('app.toast.warning') }}
                         @else
-                            Something went wrong
+                            {{ __('app.toast.error') }}
                         @endif
                     </p>
                     <p class="toast__message">{{ session('status') }}</p>
                 </div>
-                <button type="button" class="toast__close" aria-label="Tutup notifikasi">
+                <button type="button" class="toast__close" aria-label="{{ __('app.aria.close_toast') }}">
                     <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                 </button>
             </div>
@@ -38,12 +38,10 @@
     <section id="hero" class="hero home-hero">
         <div class="container hero__layout">
             <div class="hero-text" data-aos="fade-right">
-                <span class="hero-eyebrow">Human Resources Recruitment Agency</span>
-                <h1>Where Talent Thrives
-                    & Culture Elevates</h1>
-                <p class="text-lead">Discover top talent with speed, precision, and data-driven intelligence. Anagata
-                    Executive delivers end-to-end recruitment powered by AI, insight, and human expertise.</p>
-                <a class="cta-primary" href="{{ url('/#contact') }}">Find a Job</a>
+                <span class="hero-eyebrow">{{ __('app.hero.eyebrow') }}</span>
+                <h1>{{ __('app.hero.headline') }}</h1>
+                <p class="text-lead">{{ __('app.hero.description') }}</p>
+                <a class="cta-primary" href="{{ url('/#contact') }}">{{ __('app.hero.cta') }}</a>
             </div>
             <div class="hero-visual" data-aos="fade-left">
                 <img class="hero-visual__image" src="/assets/hero-sec.png"
@@ -55,15 +53,8 @@
     <section id="about">
         <div class="container section-shell section-shell--stack">
             <div class="section-heading section-heading--left" data-aos="fade-up">
-                <h2 class="section-heading__title">Excellence in Talent Acquisition</h2>
-                <p class="section-heading__text">We deliver comprehensive recruitment solutions with a data-driven and
-                    technology enabled approach to ensure your organization's success. We are committed to finding the
-                    perfect fit for both our clients and candidates. By combining deep industry expertise, a personalized
-                    recruitment approach, and an extensive professional network, we identify and attract top talent with
-                    precision and care. Our process focuses not only on skills and experience, but also on cultural
-                    alignment and long-term potential, ensuring that every placement supports sustainable growth. Through
-                    this approach, we help companies build stronger teams while guiding candidates toward meaningful career
-                    opportunities.</p>
+                <h2 class="section-heading__title">{{ __('app.about.title') }}</h2>
+                <p class="section-heading__text">{{ __('app.about.description') }}</p>
             </div>
         </div>
     </section>
@@ -71,9 +62,8 @@
     <section aria-labelledby="vision-mission-heading">
         <div class="container vision-mission-container">
             <div class="section-heading section-heading--left" data-aos="fade-up">
-                <h2 id="vision-mission-heading" class="section-heading__title">Our Vision & Mission</h2>
-                <p class="section-heading__text">Guiding principles that shape our commitment to excellence in talent
-                    acquisition</p>
+                <h2 id="vision-mission-heading" class="section-heading__title">{{ __('app.vision_mission.title') }}</h2>
+                <p class="section-heading__text">{{ __('app.vision_mission.subtitle') }}</p>
             </div>
 
             <div class="vision-mission-grid">
@@ -82,11 +72,9 @@
                         <div class="vision-mission-card__icon">
                             <i class="fa-solid fa-eye"></i>
                         </div>
-                        <h3 class="vision-mission-card__title">Our Vision</h3>
+                        <h3 class="vision-mission-card__title">{{ __('app.vision_mission.vision_title') }}</h3>
                     </div>
-                    <p class="vision-mission-card__text">To become the most trusted and strategic talent partner in the
-                        industry, recognized for our ability to deliver exceptional talent solutions that drive
-                        organizational growth and success across diverse sectors.</p>
+                    <p class="vision-mission-card__text">{{ __('app.vision_mission.vision_body') }}</p>
                 </article>
 
                 <article class="vision-mission-card vision-mission-card--mission" data-aos="fade-up" data-aos-delay="200">
@@ -94,13 +82,9 @@
                         <div class="vision-mission-card__icon">
                             <i class="fa-solid fa-bullseye"></i>
                         </div>
-                        <h3 class="vision-mission-card__title">Our Mission</h3>
+                        <h3 class="vision-mission-card__title">{{ __('app.vision_mission.mission_title') }}</h3>
                     </div>
-                    <p class="vision-mission-card__text">To bridge the gap between exceptional talent and remarkable
-                        opportunities by leveraging cutting-edge technology, data-driven insights, and human expertise. We
-                        are committed to building lasting partnerships, delivering unparalleled value to our clients, and
-                        empowering candidates to achieve their career aspirations through meaningful placements that foster
-                        professional growth and organizational excellence.</p>
+                    <p class="vision-mission-card__text">{{ __('app.vision_mission.mission_body') }}</p>
                 </article>
             </div>
         </div>
@@ -110,25 +94,22 @@
     <section id="services" aria-labelledby="services-title">
         <div class="container section-shell section-shell--stack">
             <div class="section-heading" data-aos="fade-up">
-                <h2 id="services-title" class="section-heading__title">What We Offer</h2>
-                <p class="section-heading__text">We provide comprehensive recruitment solutions tailored to your
-                    organization's unique needs. From executive leadership placements to specialized talent pipelines, our
-                    services combine data-driven insights with personalized expertise to deliver exceptional results that
-                    drive your business forward.</p>
+                <h2 id="services-title" class="section-heading__title">{{ __('app.services.title') }}</h2>
+                <p class="section-heading__text">{{ __('app.services.description') }}</p>
             </div>
 
             <div class="grid-cards grid-cards--wide">
                 <article class="card card--service" data-aos="fade-up" data-aos-delay="100">
                     <img src="/assets/scope.svg" alt="Executive Search & Leadership Placement" srcset="">
-                    <h3>Executive Search & Leadership Placement</h3>
+                    <h3>{{ __('app.services.cards.executive') }}</h3>
                 </article>
                 <article class="card card--service" data-aos="fade-up" data-aos-delay="200">
                     <img src="/assets/data-up.svg" alt="Culture Fit Recruitment for Growing Startups" srcset="">
-                    <h3>Culture Fit Recruitment for Growing Startups</h3>
+                    <h3>{{ __('app.services.cards.culture_fit') }}</h3>
                 </article>
                 <article class="card card--service" data-aos="fade-up" data-aos-delay="300">
                     <img src="/assets/analytic-chart.svg" alt="Talent Pipeline Development for Specialized Roles" srcset="">
-                    <h3>Talent Pipeline Development for Specialized Roles</h3>
+                    <h3>{{ __('app.services.cards.pipeline') }}</h3>
                 </article>
             </div>
         </div>
@@ -138,70 +119,69 @@
     <section id="why-us">
         <div class="container section-shell section-shell--stack">
             <div class="section-heading section-heading--left" data-aos="fade-up">
-                <h2 class="section-heading__title">Why Choose Us</h2>
-                <p class="section-heading__text">We deliver comprehensive recruitment solutions with a data-driven and
-                    technology-enabled approach to ensure your organization's success.</p>
+                <h2 class="section-heading__title">{{ __('app.why_us.title') }}</h2>
+                <p class="section-heading__text">{{ __('app.why_us.description') }}</p>
             </div>
             <div class="why-us-grid">
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="50">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-bolt"></i>
                     </div>
-                    <h3 class="why-us-card__title">Fast & Efficient Hiring Process</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.fast') }}</h3>
                 </article>
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-star"></i>
                     </div>
-                    <h3 class="why-us-card__title">Higher Candidate Quality</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.quality') }}</h3>
                 </article>
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="150">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-chart-line"></i>
                     </div>
-                    <h3 class="why-us-card__title">Data-Driven Decision Making</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.data') }}</h3>
                 </article>
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-network-wired"></i>
                     </div>
-                    <h3 class="why-us-card__title">Wide Talent Network</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.network') }}</h3>
                 </article>
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="250">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-handshake"></i>
                     </div>
-                    <h3 class="why-us-card__title">Culture Fit Matching</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.culture') }}</h3>
                 </article>
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-eye"></i>
                     </div>
-                    <h3 class="why-us-card__title">Transparent & Accurate</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.transparent') }}</h3>
                 </article>
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="350">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-lightbulb"></i>
                     </div>
-                    <h3 class="why-us-card__title">Labor Market Insights</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.insights') }}</h3>
                 </article>
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="400">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-plug"></i>
                     </div>
-                    <h3 class="why-us-card__title">HR System Integration</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.integration') }}</h3>
                 </article>
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="450">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-coins"></i>
                     </div>
-                    <h3 class="why-us-card__title">Cost Effective</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.cost') }}</h3>
                 </article>
                 <article class="why-us-card" data-aos="fade-up" data-aos-delay="500">
                     <div class="why-us-card__icon">
                         <i class="fa-solid fa-arrow-trend-up"></i>
                     </div>
-                    <h3 class="why-us-card__title">Continuous Improvement</h3>
+                    <h3 class="why-us-card__title">{{ __('app.why_us.cards.improvement') }}</h3>
                 </article>
             </div>
         </div>
@@ -212,9 +192,8 @@
     <section id="contact">
         <div class="container section-shell contact-section">
             <div class="section-heading contact-section__heading" data-aos="fade-up">
-                <h2 class="section-heading__title">Talk to US</h2>
-                <p class="section-heading__text">Let us help you find the people who will shape your success. Contact us
-                    today</p>
+                <h2 class="section-heading__title">{{ __('app.contact.title') }}</h2>
+                <p class="section-heading__text">{{ __('app.contact.subtitle') }}</p>
             </div>
             <div class="contact-section__grid">
                 <div class="card card--form" data-aos="fade-up" data-aos-delay="100">
@@ -222,18 +201,18 @@
                         @csrf
                         {{-- Honeypot field for spam bots --}}
                         <div class="sr-only" aria-hidden="true">
-                            <label for="company">Company</label>
+                            <label for="company">{{ __('app.contact.form.honeypot_label') }}</label>
                             <input id="company" type="text" name="company" tabindex="-1" autocomplete="off">
                         </div>
                         <div class="form-grid">
                             <div class="form-field">
-                                <label for="first_name">First Name</label>
+                                <label for="first_name">{{ __('app.contact.form.first_name_label') }}</label>
                                 <div class="input-with-icon">
                                     <span class="input-icon" aria-hidden="true">
                                         <i class="fa-solid fa-user"></i>
                                     </span>
                                     <input id="first_name" type="text" name="first_name"
-                                        value="{{ old('first_name') }}" placeholder="Enter your first name" required
+                                        value="{{ old('first_name') }}" placeholder="{{ __('app.contact.form.first_name_placeholder') }}" required
                                         autocomplete="given-name">
                                 </div>
                                 @error('first_name')
@@ -241,13 +220,13 @@
                                 @enderror
                             </div>
                             <div class="form-field">
-                                <label for="last_name">Last Name (optional)</label>
+                                <label for="last_name">{{ __('app.contact.form.last_name_label') }}</label>
                                 <div class="input-with-icon">
                                     <span class="input-icon" aria-hidden="true">
                                         <i class="fa-solid fa-user"></i>
                                     </span>
                                     <input id="last_name" type="text" name="last_name"
-                                        value="{{ old('last_name') }}" placeholder="Enter your last name"
+                                        value="{{ old('last_name') }}" placeholder="{{ __('app.contact.form.last_name_placeholder') }}"
                                         autocomplete="family-name">
                                 </div>
                                 @error('last_name')
@@ -257,26 +236,26 @@
                         </div>
                         <div class="form-grid">
                             <div class="form-field">
-                                <label for="email">Email Address</label>
+                                <label for="email">{{ __('app.contact.form.email_label') }}</label>
                                 <div class="input-with-icon">
                                     <span class="input-icon" aria-hidden="true">
                                         <i class="fa-solid fa-envelope"></i>
                                     </span>
                                     <input id="email" type="email" name="email" value="{{ old('email') }}"
-                                        placeholder="Enter your email address" required autocomplete="email">
+                                        placeholder="{{ __('app.contact.form.email_placeholder') }}" required autocomplete="email">
                                 </div>
                                 @error('email')
                                     <p class="form-error">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div class="form-field">
-                                <label for="phone">Phone Number</label>
+                                <label for="phone">{{ __('app.contact.form.phone_label') }}</label>
                                 <div class="input-with-icon">
                                     <span class="input-icon" aria-hidden="true">
                                         <i class="fa-solid fa-phone"></i>
                                     </span>
                                     <input id="phone" type="text" name="phone" value="{{ old('phone') }}"
-                                        placeholder="Enter your phone number" autocomplete="tel">
+                                        placeholder="{{ __('app.contact.form.phone_placeholder') }}" autocomplete="tel">
                                 </div>
                                 @error('phone')
                                     <p class="form-error">{{ $message }}</p>
@@ -284,18 +263,18 @@
                             </div>
                         </div>
                         <div class="form-field">
-                            <label for="message">Message</label>
+                            <label for="message">{{ __('app.contact.form.message_label') }}</label>
                             <div class="input-with-icon textarea-with-icon">
                                 <span class="input-icon" aria-hidden="true">
                                 <i class="fa-solid fa-comment-dots"></i>
                             </span>
-                                <textarea id="message" name="message" placeholder="Tell us about your job interests, skills, experience, or what you're looking for" required rows="4">{{ old('message') }}</textarea>
+                                <textarea id="message" name="message" placeholder="{{ __('app.contact.form.message_placeholder') }}" required rows="4">{{ old('message') }}</textarea>
                             </div>
                             @error('message')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
-                        <button type="submit" class="cta-primary">Send Message</button>
+                        <button type="submit" class="cta-primary">{{ __('app.contact.form.submit') }}</button>
                     </form>
                 </div>
 
@@ -304,6 +283,12 @@
     </section>
 
     @push('scripts')
+        @php
+            $contactValidationMessages = __('app.contact.validation');
+        @endphp
+        <script>
+            window.contactFormMessages = @json($contactValidationMessages);
+        </script>
         <script src="/js/contact-form.js"></script>
     @endpush
 @endsection

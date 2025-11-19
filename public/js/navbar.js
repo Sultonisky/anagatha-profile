@@ -9,6 +9,57 @@
     function initNavbar() {
         const navToggle = document.querySelector('[data-nav-toggle]');
         const navLinks = document.querySelector('[data-nav-links]');
+        const languageSwitcher = document.querySelector('[data-language-switcher]');
+
+        const initLanguageSwitcher = () => {
+            if (!languageSwitcher) {
+                return;
+            }
+
+            const buttons = languageSwitcher.querySelectorAll('.language-switcher__btn[data-language]');
+            if (!buttons.length) {
+                return;
+            }
+
+            const availableLanguages = Array.from(buttons).map((button) => button.dataset.language);
+            const defaultLanguage = languageSwitcher.dataset.defaultLanguage || availableLanguages[0];
+
+            const setActiveLanguage = (language) => {
+                buttons.forEach((button) => {
+                    const isActive = button.dataset.language === language;
+                    button.classList.toggle('is-active', isActive);
+                    button.setAttribute('aria-pressed', String(isActive));
+                });
+                languageSwitcher.dataset.selectedLanguage = language;
+            };
+
+            setActiveLanguage(defaultLanguage);
+
+            buttons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    const selectedLanguage = button.dataset.language;
+                    const targetUrl = button.dataset.languageUrl;
+
+                    if (!selectedLanguage || selectedLanguage === languageSwitcher.dataset.selectedLanguage) {
+                        return;
+                    }
+
+                    setActiveLanguage(selectedLanguage);
+
+                    if (targetUrl) {
+                        window.location.href = targetUrl;
+                        return;
+                    }
+
+                    languageSwitcher.dispatchEvent(new CustomEvent('languagechange', {
+                        detail: { language: selectedLanguage },
+                        bubbles: true
+                    }));
+                });
+            });
+        };
+
+        initLanguageSwitcher();
 
         if (!navToggle || !navLinks) {
             return;

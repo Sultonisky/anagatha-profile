@@ -2,14 +2,14 @@
     <div class="container footer-grid">
         <div class="footer-branding">
             <p class="footer-brand">Anagata Executive</p>
-            <p class="footer-tagline">Where Data Meet Talent</p>
+            <p class="footer-tagline">{{ __('app.footer.tagline') }}</p>
         </div>
-        <nav class="footer-links" aria-label="Footer navigation">
-            <a href="{{ url('/#hero') }}">Home</a>
-            <a href="{{ url('/#about') }}">About</a>
-            <a href="{{ url('/#services') }}">Services</a>
-            <a href="{{ url('/#why-us') }}">Why Us</a>
-            <a href="{{ url('/#contact') }}">Contact</a>
+        <nav class="footer-links" aria-label="{{ __('app.footer.nav_label') }}">
+            <a href="{{ url('/#hero') }}">{{ __('app.nav.home') }}</a>
+            <a href="{{ url('/#about') }}">{{ __('app.nav.about') }}</a>
+            <a href="{{ url('/#services') }}">{{ __('app.nav.services') }}</a>
+            <a href="{{ url('/#why-us') }}">{{ __('app.nav.why_us') }}</a>
+            <a href="{{ url('/#contact') }}">{{ __('app.nav.contact') }}</a>
         </nav>
         <div class="footer-contacts">
             <p class="footer-contact">
@@ -23,7 +23,7 @@
         </div>
     </div>
     <div class="container footer-bottom">
-        <p>&copy; {{ date('Y') }} Anagata Executive. All rights reserved.</p>
+        <p>&copy; {{ date('Y') }} Anagata Executive. {{ __('app.footer.rights') }}</p>
     </div>
 </footer>
 

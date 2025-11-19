@@ -75,6 +75,17 @@
             return field.el !== null;
         });
 
+        const localizedMessages = (typeof window !== 'undefined' && window.contactFormMessages && typeof window.contactFormMessages === 'object')
+            ? window.contactFormMessages
+            : {};
+
+        const buildMessages = function(fieldName, defaults) {
+            const overrides = (localizedMessages && typeof localizedMessages[fieldName] === 'object')
+                ? localizedMessages[fieldName]
+                : {};
+            return Object.assign({}, defaults, overrides);
+        };
+
         // Validation rules
         const validationRules = {
             first_name: {
@@ -82,31 +93,31 @@
                 min: 4,
                 max: 60,
                 regex: /^[^<>]*$/,
-                message: {
+                message: buildMessages('first_name', {
                     required: 'First name is required',
                     min: 'First name must be at least 4 characters',
                     max: 'First name must not exceed 60 characters',
                     regex: 'First name contains invalid characters'
-                }
+                })
             },
             last_name: {
                 required: false,
                 max: 60,
                 regex: /^[^<>]*$/,
-                message: {
+                message: buildMessages('last_name', {
                     max: 'Last name must not exceed 60 characters',
                     regex: 'Last name contains invalid characters'
-                }
+                })
             },
             email: {
                 required: true,
                 max: 35,
                 email: true,
-                message: {
+                message: buildMessages('email', {
                     required: 'Email is required',
                     email: 'Please enter a valid email address (e.g. name@example.com)',
                     max: 'Email must not exceed 35 characters'
-                }
+                })
             },
             phone: {
                 required: true,
@@ -114,25 +125,25 @@
                 max: 15,
                 regex: /^\(\+\d{1,2}\)\s?\d{6,}$/,
                 countryCodeRegex: /^\(\+\d{1,2}\)$/,
-                message: {
+                message: buildMessages('phone', {
                     required: 'Phone number is required',
                     min: 'Phone number must be at least 10 characters',
                     max: 'Phone number must not exceed 15 characters',
                     countryCode: 'Please enter a valid country code in format (+X) or (+XX) before continuing',
                     regex: 'Phone number must be in format (+X) YYYYYYYY or (+XX) YYYYYYYY (e.g. (+62) 81234567890, (+1) 2345678900)'
-                }
+                })
             },
             message: {
                 required: true,
                 min: 10,
                 max: 2000,
                 regex: /^[^<>]*$/,
-                message: {
+                message: buildMessages('message', {
                     required: 'Message is required',
                     min: 'Message must be at least 10 characters',
                     max: 'Message must not exceed 2000 characters',
                     regex: 'Message contains invalid characters'
-                }
+                })
             }
         };
 
