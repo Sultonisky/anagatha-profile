@@ -23,6 +23,7 @@
     --radius-pill: 999px;
     --transition-base: 150ms ease;
     --content-max: 1140px;
+    --header-height: 88px;
     scroll-behavior: smooth;
 }
 
@@ -50,10 +51,19 @@ body {
     width: 100%;
     max-width: 100vw;
     position: relative;
+    padding-top: var(--header-height);
+    padding-right: var(--scrollbar-compensation, 0px);
+}
+
+html.modal-open,
+body.modal-open {
+    overflow: hidden;
 }
 
 body.modal-open {
-    overflow: hidden;
+    touch-action: none;
+    overscroll-behavior: contain;
+    padding-right: var(--scrollbar-compensation, 0px);
 }
 
 .page {
@@ -182,12 +192,16 @@ main > .container {
    ========================================================================== */
 
 .site-header {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 20;
+    left: 0;
+    right: 0;
+    z-index: 50;
     backdrop-filter: blur(18px);
     background: rgba(255, 255, 255, 0.86);
     border-bottom: 1px solid rgba(128, 10, 10, 0.08);
+    box-shadow: 0 10px 25px -18px rgba(16, 23, 40, 0.65);
+    padding-right: var(--scrollbar-compensation, 0px);
 }
 
 .nav {
@@ -372,6 +386,12 @@ body.nav-open {
 .hero {
     padding-block: 5rem;
     margin-top: -75px;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --header-height: 72px;
+    }
 }
 
 .home-hero {
@@ -697,14 +717,16 @@ section > .container:not(.hero__layout) {
 .service-modal {
     position: fixed;
     inset: 0;
-    padding: 2rem;
+    padding: calc(var(--header-height) + 1.5rem) 1.5rem 2rem;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     z-index: 40;
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--transition-base);
+    overflow: hidden;
+    min-height: 100vh;
 }
 
 .service-modal.is-active {
@@ -727,6 +749,8 @@ section > .container:not(.hero__layout) {
     box-shadow: 0 45px 85px -45px rgba(16, 23, 40, 0.65);
     padding: clamp(1.5rem, 2vw, 2.5rem);
     outline: none;
+    max-height: calc(100vh - var(--header-height) - 3rem);
+    overflow-y: auto;
 }
 
 .service-modal__close {

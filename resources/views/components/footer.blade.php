@@ -28,8 +28,8 @@
         <div class="footer-supported">
             <h3 class="footer-supported-heading">Supported by</h3>
             <div class="footer-supported-logos">
-                <img src="{{ asset('assets/logo-google-ai.png') }}" alt="Google AI logo" loading="lazy">
-                <img src="{{ asset('assets/logo_kemnaker.png') }}" alt="Kemnaker logo" loading="lazy">
+                <img src="/assets/logo-google-ai.png" alt="Google AI logo" loading="lazy" decoding="async">
+                <img src="/assets/logo_kemnaker.png" alt="Kemnaker logo" loading="lazy" decoding="async">
             </div>
         </div>
     </div>

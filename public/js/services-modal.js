@@ -11,6 +11,7 @@
         const serviceData = window.serviceCardData || {};
         const modal = document.querySelector('[data-service-modal]');
         const cards = document.querySelectorAll('[data-service-card]');
+        const root = document.documentElement;
 
         if (!modal || !cards.length || !Object.keys(serviceData).length) {
             return;
@@ -33,6 +34,8 @@
         let lastFocusedElement = null;
         let hideTimeout;
         let activeCard = null;
+        let scrollPosition = 0;
+        let previousBodyPaddingRight = '';
 
         const hoverClass = 'service-card--hover';
         const activeClass = 'service-card--active';
@@ -104,11 +107,26 @@
         };
 
         const lockScroll = () => {
+            scrollPosition = window.scrollY || window.pageYOffset || 0;
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+            previousBodyPaddingRight = document.body.style.paddingRight || '';
+
+            if (scrollbarWidth > 0) {
+                document.documentElement.style.setProperty('--scrollbar-compensation', `${scrollbarWidth}px`);
+            } else {
+                document.documentElement.style.setProperty('--scrollbar-compensation', '0px');
+            }
+
             document.body.classList.add('modal-open');
+            root.classList.add('modal-open');
         };
 
         const unlockScroll = () => {
             document.body.classList.remove('modal-open');
+            root.classList.remove('modal-open');
+            document.documentElement.style.setProperty('--scrollbar-compensation', '0px');
+            previousBodyPaddingRight = '';
+            window.scrollTo({ top: scrollPosition, behavior: 'auto' });
         };
 
         const openModal = (key) => {
@@ -158,7 +176,9 @@
             requestAnimationFrame(() => {
                 modal.classList.add('is-active');
                 lockScroll();
-                dialog?.focus();
+                if (dialog && typeof dialog.focus === 'function') {
+                    dialog.focus({ preventScroll: true });
+                }
             });
         };
 
