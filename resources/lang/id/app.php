@@ -49,6 +49,36 @@ Dengan pengalaman industri yang kuat, pendekatan yang personal, dan jaringan pro
             'culture_fit' => 'Rekrutmen Berbasis Culture Fit untuk Startup',
             'pipeline' => 'Pengembangan Pipeline Talenta untuk Posisi Spesialis',
         ],
+        'modal_copy' => [
+            'subtitle' => 'Apa yang Anda dapatkan',
+            'cta' => 'Diskusikan kebutuhan Anda',
+        ],
+        'modal' => [
+            'executive' => [
+                'summary' => 'Pendampingan rekrutmen end-to-end untuk level C dan leader strategis dengan proses rahasia, asesmen terstruktur, dan rekomendasi berbasis data.',
+                'details' => [
+                    'Riset kandidat eksekutif dan pemetaan pasar khusus',
+                    'Asesmen perilaku, kepemimpinan, dan kecocokan budaya',
+                    'Laporan progres mingguan serta alignment stakeholder',
+                ],
+            ],
+            'culture_fit' => [
+                'summary' => 'Sprint rekrutmen untuk startup agar budaya dan nilai perusahaan menjadi filter utama, dilengkapi scorecard, storytelling, dan kesiapan onboarding.',
+                'details' => [
+                    'Membangun scorecard budaya dan panduan wawancara',
+                    'Pesan employer branding dan storytelling kandidat',
+                    'Dukungan negosiasi penawaran untuk tim yang tumbuh cepat',
+                ],
+            ],
+            'pipeline' => [
+                'summary' => 'Siapkan talenta spesialis sebelum dibutuhkan melalui pipeline siap-hire, insight pasar berkelanjutan, dan engagement proaktif.',
+                'details' => [
+                    'Segmentasi talenta dan validasi gap keterampilan',
+                    'Sourcing berkelanjutan dengan workflow nurturing',
+                    'Laporan dashboard untuk proyeksi kebutuhan hiring',
+                ],
+            ],
+        ],
     ],
 
     'why_us' => [

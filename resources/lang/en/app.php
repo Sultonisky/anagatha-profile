@@ -47,6 +47,36 @@ return [
             'culture_fit' => 'Culture Fit Recruitment for Growing Startups',
             'pipeline' => 'Talent Pipeline Development for Specialized Roles',
         ],
+        'modal_copy' => [
+            'subtitle' => 'What you get',
+            'cta' => 'Discuss your hiring needs',
+        ],
+        'modal' => [
+            'executive' => [
+                'summary' => 'End-to-end leadership hiring support for C-level and strategic roles with confidential search, structured assessments, and data-backed recommendations.',
+                'details' => [
+                    'Dedicated executive researchers and market mapping',
+                    'Behavioral, leadership, and culture fit assessments',
+                    'Weekly progress reporting with stakeholder alignment',
+                ],
+            ],
+            'culture_fit' => [
+                'summary' => 'Sprint-based recruitment for high-growth teams where culture alignment matters the most, complete with scorecards, storytelling, and onboarding readiness.',
+                'details' => [
+                    'Co-create culture scorecards and interview guides',
+                    'Employer branding messaging & candidate storytelling',
+                    'Offer and onboarding support tailored for startups',
+                ],
+            ],
+            'pipeline' => [
+                'summary' => 'Future-proof critical roles with ready-to-hire talent pipelines, continuous market intelligence, and proactive engagement workflows.',
+                'details' => [
+                    'Talent segmentation and skills gap validation',
+                    'Always-on sourcing with nurture cadences',
+                    'Dashboard-ready reporting for hiring forecasts',
+                ],
+            ],
+        ],
     ],
 
     'why_us' => [

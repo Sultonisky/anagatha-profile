@@ -99,21 +99,49 @@
             </div>
 
             <div class="grid-cards grid-cards--wide">
-                <article class="card card--service" data-aos="fade-up" data-aos-delay="100">
+                <article class="card card--service" data-service-card data-service-key="executive" role="button"
+                    tabindex="0" aria-haspopup="dialog" aria-controls="service-modal" data-aos="fade-up" data-aos-delay="100">
                     <img src="/assets/scope.svg" alt="Executive Search & Leadership Placement" srcset="">
                     <h3>{{ __('app.services.cards.executive') }}</h3>
                 </article>
-                <article class="card card--service" data-aos="fade-up" data-aos-delay="200">
+                <article class="card card--service" data-service-card data-service-key="culture_fit" role="button"
+                    tabindex="0" aria-haspopup="dialog" aria-controls="service-modal" data-aos="fade-up" data-aos-delay="200">
                     <img src="/assets/data-up.svg" alt="Culture Fit Recruitment for Growing Startups" srcset="">
                     <h3>{{ __('app.services.cards.culture_fit') }}</h3>
                 </article>
-                <article class="card card--service" data-aos="fade-up" data-aos-delay="300">
+                <article class="card card--service" data-service-card data-service-key="pipeline" role="button"
+                    tabindex="0" aria-haspopup="dialog" aria-controls="service-modal" data-aos="fade-up" data-aos-delay="300">
                     <img src="/assets/analytic-chart.svg" alt="Talent Pipeline Development for Specialized Roles" srcset="">
                     <h3>{{ __('app.services.cards.pipeline') }}</h3>
                 </article>
             </div>
         </div>
     </section>
+
+    <div class="service-modal" id="service-modal" data-service-modal hidden aria-hidden="true">
+        <div class="service-modal__backdrop" data-service-modal-close></div>
+        <div class="service-modal__dialog" data-service-modal-dialog role="dialog" aria-modal="true"
+            aria-labelledby="service-modal-title" tabindex="-1">
+            <button type="button" class="service-modal__close" aria-label="{{ __('app.aria.close_toast') }}"
+                data-service-modal-close>
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+            <div class="service-modal__body">
+                <div class="service-modal__content">
+                    <p class="service-modal__eyebrow" data-service-modal-subtitle>{{ __('app.services.modal_copy.subtitle') }}</p>
+                    <h3 class="service-modal__title" id="service-modal-title" data-service-modal-title></h3>
+                    <p class="service-modal__summary" data-service-modal-summary></p>
+                    <ul class="service-modal__list" data-service-modal-list hidden></ul>
+                    <a class="cta-primary service-modal__cta" href="#contact" data-service-modal-cta>
+                        {{ __('app.services.modal_copy.cta') }}
+                    </a>
+                </div>
+                <div class="service-modal__visual">
+                    <img src="" alt="" class="service-modal__image is-hidden" data-service-modal-image>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <section id="why-us">
@@ -285,10 +313,43 @@
     @push('scripts')
         @php
             $contactValidationMessages = __('app.contact.validation');
+            $serviceModalCopy = [
+                'subtitle' => __('app.services.modal_copy.subtitle'),
+                'cta' => __('app.services.modal_copy.cta'),
+            ];
+            $serviceModalData = [
+                'executive' => [
+                    'title' => __('app.services.cards.executive'),
+                    'summary' => __('app.services.modal.executive.summary'),
+                    'details' => __('app.services.modal.executive.details'),
+                    'image' => '/assets/scope.svg',
+                    'imageAlt' => __('app.services.cards.executive'),
+                    'cta' => '#contact',
+                ],
+                'culture_fit' => [
+                    'title' => __('app.services.cards.culture_fit'),
+                    'summary' => __('app.services.modal.culture_fit.summary'),
+                    'details' => __('app.services.modal.culture_fit.details'),
+                    'image' => '/assets/data-up.svg',
+                    'imageAlt' => __('app.services.cards.culture_fit'),
+                    'cta' => '#contact',
+                ],
+                'pipeline' => [
+                    'title' => __('app.services.cards.pipeline'),
+                    'summary' => __('app.services.modal.pipeline.summary'),
+                    'details' => __('app.services.modal.pipeline.details'),
+                    'image' => '/assets/analytic-chart.svg',
+                    'imageAlt' => __('app.services.cards.pipeline'),
+                    'cta' => '#contact',
+                ],
+            ];
         @endphp
         <script>
             window.contactFormMessages = @json($contactValidationMessages);
+            window.serviceModalCopy = @json($serviceModalCopy);
+            window.serviceCardData = @json($serviceModalData);
         </script>
+        <script src="/js/services-modal.js"></script>
         <script src="/js/contact-form.js"></script>
     @endpush
 @endsection
