@@ -567,6 +567,7 @@ section > .container:not(.hero__layout) {
 .grid-cards--wide {
     display: grid;
     gap: 1.8rem;
+    padding-top: 4px;
 }
 
 .grid-cards {
@@ -672,7 +673,7 @@ section > .container:not(.hero__layout) {
     background-color: var(--brand-500) !important;
     border: 2px solid transparent !important;
     box-shadow: 0 18px 45px -30px rgba(128, 10, 10, 0.6) !important;
-    transition: all 0.5s;
+    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
     cursor: pointer;
     outline: none;
     padding: 0 !important;
@@ -683,14 +684,14 @@ section > .container:not(.hero__layout) {
 .card.card--service:focus-visible,
 .card.card--service.service-card--hover {
     border-color: rgba(255, 255, 255, 0.65) !important;
-    transform: scale(1.05);
+    transform: translateY(-4px);
     box-shadow: 0 25px 55px -35px rgba(128, 10, 10, 0.55) !important;
 }
 
 .card.card--service:active,
 .card.card--service.service-card--active {
-    transform: scale(0.95) rotateZ(1.7deg);
-    box-shadow: 0 15px 35px -25px rgba(128, 10, 10, 0.5) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 20px 45px -30px rgba(128, 10, 10, 0.5) !important;
 }
 
 .card--service__content {
@@ -705,8 +706,11 @@ section > .container:not(.hero__layout) {
 .card--service__text {
     padding: 2rem;
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 1.25rem;
+    order: 3;
 }
 
 .card--service__text h3 {
@@ -714,16 +718,43 @@ section > .container:not(.hero__layout) {
     color: #ffffff !important;
     margin: 0;
     line-height: 1.3;
-    text-align: left;
+    text-align: right;
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
+}
+
+.card--service__button {
+    background-color: #ffffff;
+    color: var(--brand-500);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 0.65rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition-base), color var(--transition-base), transform var(--transition-base), box-shadow var(--transition-base);
+    white-space: nowrap;
+    font-family: inherit;
+}
+
+.card--service__button:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: var(--brand-700);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card--service__button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .card--service__divider {
     width: 1px;
     background-color: rgba(255, 255, 255, 0.4);
     margin: 1.5rem 0;
+    order: 2;
 }
 
 .card--service__icon {
@@ -732,6 +763,7 @@ section > .container:not(.hero__layout) {
     align-items: center;
     justify-content: center;
     height: 100%;
+    order: 1;
 }
 
 .card--service__icon img {
@@ -843,17 +875,21 @@ section > .container:not(.hero__layout) {
 
 .service-modal__title-wrapper > .service-modal__divider {
     margin-left: 0.5rem;
-    margin-right: 2rem;
+    margin-right: 0.5rem;
+    order: 2;
 }
 
 .service-modal__title-wrapper > .service-modal__icon {
-    margin-left: 1rem;
+    margin-left: 0;
+    margin-right: 0.5rem;
     padding-left: 0;
+    order: 1;
 }
 
 .service-modal__title-wrapper .service-modal__title {
     max-width: 60%;
     flex: 0 1 auto;
+    order: 3;
 }
 
 .service-modal__close {
@@ -989,8 +1025,21 @@ section > .container:not(.hero__layout) {
     background: var(--brand-400);
 }
 
+.service-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 1.25rem clamp(1.5rem, 2vw, 2.5rem);
+    border-top: 1px solid rgba(16, 23, 40, 0.08);
+    background: var(--surface-100);
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
 .service-modal__cta {
-    align-self: flex-start;
+    margin: 0;
 }
 
 .service-modal__visual {
@@ -2051,6 +2100,18 @@ footer {
         flex: 1;
     }
     
+    /* Efek hover di mobile - selaras dengan card lainnya */
+    .card.card--service:hover,
+    .card.card--service:focus-visible,
+    .card.card--service.service-card--hover {
+        transform: translateY(-4px);
+    }
+    
+    .card.card--service:active,
+    .card.card--service.service-card--active {
+        transform: translateY(-2px);
+    }
+    
     .why-us-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
@@ -2433,6 +2494,7 @@ footer {
     
     .service-modal__title-wrapper > .service-modal__icon {
         margin-left: 0 !important;
+        margin-right: 0.5rem !important;
         padding-left: 0 !important;
     }
 }
@@ -2442,6 +2504,7 @@ footer {
         border-radius: 16px;
         max-width: 520px;
         width: 100%;
+        max-height: 80vh;
     }
 
     .service-modal__header {
@@ -2455,7 +2518,7 @@ footer {
     }
 
     .service-modal__body {
-        padding: 1.2rem;
+        padding: 1rem;
     }
 
     .service-modal__title-wrapper {
@@ -2503,6 +2566,7 @@ footer {
     
     .service-modal__title-wrapper > .service-modal__icon {
         margin-left: 0 !important;
+        margin-right: 0.5rem !important;
         padding-left: 0 !important;
         flex-shrink: 0;
         display: flex !important;
@@ -2545,6 +2609,11 @@ footer {
         flex-shrink: 0;
     }
 
+    .service-modal__footer {
+        padding: 1rem 1.2rem;
+        justify-content: center;
+    }
+
     .service-modal__cta {
         width: 100%;
         justify-content: center;
@@ -2567,13 +2636,31 @@ footer {
         height: 100%;
         flex: 1;
     }
+    
+    /* Efek hover di mobile kecil - selaras dengan card lainnya */
+    .card.card--service:hover,
+    .card.card--service:focus-visible,
+    .card.card--service.service-card--hover {
+        transform: translateY(-4px);
+    }
+    
+    .card.card--service:active,
+    .card.card--service.service-card--active {
+        transform: translateY(-2px);
+    }
 
     .card--service__text {
         padding: 1.5rem;
+        gap: 1rem;
     }
 
     .card--service__text h3 {
         font-size: 1.4rem;
+    }
+
+    .card--service__button {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.9rem;
     }
 
     .card--service__icon {
@@ -2592,18 +2679,19 @@ footer {
 
 @media (max-width: 480px) {
     .service-modal {
-        padding: calc(var(--header-height) + 0.5rem) 0.5rem 0.5rem;
+        padding: calc(var(--header-height) + 0.5rem) 0.5rem 0.75rem;
+        align-items: center;
     }
 
     .service-modal__dialog {
         height: auto;
-        max-height: calc(100vh - var(--header-height) - 1rem);
+        max-height: 75vh;
         border-radius: 12px;
         width: 100%;
     }
 
     .service-modal__header {
-        padding: 1rem 1rem 0.85rem;
+        padding: 0.85rem 1rem 0.75rem;
         gap: 0.65rem;
     }
     
@@ -2613,7 +2701,12 @@ footer {
     }
 
     .service-modal__body {
-        padding: 1rem;
+        padding: 0.85rem;
+    }
+
+    .service-modal__footer {
+        padding: 0.75rem 1rem;
+        justify-content: center;
     }
 
     .service-modal__title-wrapper {
@@ -2661,6 +2754,7 @@ footer {
     
     .service-modal__title-wrapper > .service-modal__icon {
         margin-left: 0 !important;
+        margin-right: 0.5rem !important;
         padding-left: 0 !important;
         flex-shrink: 0;
         height: clamp(2rem, 4.5vw, 3rem);
@@ -2734,13 +2828,31 @@ footer {
         height: 100%;
         flex: 1;
     }
+    
+    /* Efek hover di mobile sangat kecil - selaras dengan card lainnya */
+    .card.card--service:hover,
+    .card.card--service:focus-visible,
+    .card.card--service.service-card--hover {
+        transform: translateY(-4px);
+    }
+    
+    .card.card--service:active,
+    .card.card--service.service-card--active {
+        transform: translateY(-2px);
+    }
 
     .card--service__text {
         padding: 1.25rem;
+        gap: 0.85rem;
     }
 
     .card--service__text h3 {
         font-size: 1.2rem;
+    }
+
+    .card--service__button {
+        padding: 0.55rem 1.1rem;
+        font-size: 0.85rem;
     }
 
     .card--service__icon {

@@ -48,6 +48,7 @@ Dengan pengalaman industri yang kuat, pendekatan yang personal, dan jaringan pro
             'executive' => 'Rekrutmen Eksekutif & Profesional',
             'culture_fit' => 'Pelatihan & Pengembangan SDM Perusahaan',
             'pipeline' => 'Layanan Outsourcing Tenaga Kerja Profesional',
+            'view_details' => 'Lihat Detail',
         ],
         'modal_copy' => [
             'subtitle' => 'Apa yang Anda dapatkan',

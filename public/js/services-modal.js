@@ -161,8 +161,6 @@
                         const title = visiMisiMatch[1];
                         const connector = visiMisiMatch[2];
                         let content = visiMisiMatch[3];
-                        // Make "Anagata Executive" bold in content
-                        content = content.replace(/(Anagata Executive)/gi, '<strong>$1</strong>');
                         return `<p><strong>${title} ${connector}</strong> ${content}</p>`;
                     }
                     
@@ -171,9 +169,6 @@
                     if (jenisTrainingMatch) {
                         return `<p><strong>${jenisTrainingMatch[1]}:</strong></p>`;
                     }
-                    
-                    // Make "Anagata Executive" bold everywhere in regular paragraphs
-                    para = para.replace(/(Anagata Executive)/gi, '<strong>$1</strong>');
                     
                     // Regular paragraph - wrap in <p>
                     return `<p>${para}</p>`;
@@ -259,6 +254,22 @@
                     event.preventDefault();
                     setActiveCard(card);
                     openModal(key);
+                }
+            });
+        });
+
+        // Handle button clicks inside service cards
+        const cardButtons = document.querySelectorAll('[data-service-card-trigger]');
+        cardButtons.forEach((button) => {
+            button.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent card click event
+                const card = button.closest('[data-service-card]');
+                if (card) {
+                    const key = card.getAttribute('data-service-key');
+                    if (key) {
+                        setActiveCard(card);
+                        openModal(key);
+                    }
                 }
             });
         });

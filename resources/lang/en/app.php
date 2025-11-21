@@ -46,6 +46,7 @@ return [
             'executive' => 'Executive & Professional Recruitment',
             'culture_fit' => 'Corporate Training & Talent Development',
             'pipeline' => 'Professional Workforce Outsourcing Services',
+            'view_details' => 'View Details',
         ],
         'modal_copy' => [
             'subtitle' => 'What you get',

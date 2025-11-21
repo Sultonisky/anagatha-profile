@@ -104,6 +104,9 @@
                     <div class="card--service__content">
                         <div class="card--service__text">
                             <h3>{{ __('app.services.cards.executive') }}</h3>
+                            <button type="button" class="card--service__button" data-service-card-trigger>
+                                {{ __('app.services.cards.view_details') }}
+                            </button>
                         </div>
                         <div class="card--service__divider"></div>
                         <div class="card--service__icon">
@@ -116,6 +119,9 @@
                     <div class="card--service__content">
                         <div class="card--service__text">
                             <h3>{{ __('app.services.cards.culture_fit') }}</h3>
+                            <button type="button" class="card--service__button" data-service-card-trigger>
+                                {{ __('app.services.cards.view_details') }}
+                            </button>
                         </div>
                         <div class="card--service__divider"></div>
                         <div class="card--service__icon">
@@ -128,6 +134,9 @@
                     <div class="card--service__content">
                         <div class="card--service__text">
                             <h3>{{ __('app.services.cards.pipeline') }}</h3>
+                            <button type="button" class="card--service__button" data-service-card-trigger>
+                                {{ __('app.services.cards.view_details') }}
+                            </button>
                         </div>
                         <div class="card--service__divider"></div>
                         <div class="card--service__icon">
@@ -163,10 +172,12 @@
                 <div class="service-modal__content">
                     <p class="service-modal__summary" data-service-modal-summary></p>
                     <ul class="service-modal__list" data-service-modal-list hidden></ul>
-                    <a class="cta-primary service-modal__cta" href="#contact" data-service-modal-cta>
-                        {{ __('app.services.modal_copy.cta') }}
-                    </a>
                 </div>
+            </div>
+            <div class="service-modal__footer">
+                <a class="cta-primary service-modal__cta" href="#contact" data-service-modal-cta>
+                    {{ __('app.services.modal_copy.cta') }}
+                </a>
             </div>
         </div>
     </div>
