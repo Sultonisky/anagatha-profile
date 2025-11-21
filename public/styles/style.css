@@ -758,7 +758,9 @@ section > .container:not(.hero__layout) {
 }
 
 .card--service__icon {
-    padding: 1.5rem;
+    padding: 1.5rem 1.25rem;
+    padding-left: 1.5rem;
+    padding-right: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -769,8 +771,8 @@ section > .container:not(.hero__layout) {
 
 .card--service__icon img {
     filter: brightness(0) invert(1);
-    max-width: 60px;
-    max-height: 60px;
+    max-width: 45px;
+    max-height: 45px;
     width: auto;
     height: auto;
     object-fit: contain;
@@ -2112,7 +2114,9 @@ footer {
     }
     
     .card--service__icon {
-        padding: 1.25rem;
+        padding: 1.25rem 1rem;
+        padding-left: 1.25rem;
+        padding-right: 0.75rem;
         overflow: hidden;
         display: flex;
         align-items: center;
@@ -2120,8 +2124,8 @@ footer {
     }
     
     .card--service__icon img {
-        max-width: 50px;
-        max-height: 50px;
+        max-width: 40px;
+        max-height: 40px;
         width: auto;
         height: auto;
         object-fit: contain;
@@ -2686,7 +2690,9 @@ footer {
     }
 
     .card--service__icon {
-        padding: 1.25rem;
+        padding: 1.25rem 1rem;
+        padding-left: 1.25rem;
+        padding-right: 0.75rem;
         overflow: hidden;
         display: flex;
         align-items: center;
@@ -2694,8 +2700,8 @@ footer {
     }
 
     .card--service__icon img {
-        max-width: 45px;
-        max-height: 45px;
+        max-width: 35px;
+        max-height: 35px;
         width: auto;
         height: auto;
         object-fit: contain;
@@ -2880,7 +2886,9 @@ footer {
     }
 
     .card--service__icon {
-        padding: 1rem;
+        padding: 1rem 0.875rem;
+        padding-left: 1rem;
+        padding-right: 0.625rem;
         overflow: hidden;
         display: flex;
         align-items: center;
@@ -2888,8 +2896,8 @@ footer {
     }
 
     .card--service__icon img {
-        max-width: 40px;
-        max-height: 40px;
+        max-width: 32px;
+        max-height: 32px;
         width: auto;
         height: auto;
         object-fit: contain;
