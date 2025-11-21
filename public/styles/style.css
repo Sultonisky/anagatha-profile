@@ -764,12 +764,13 @@ section > .container:not(.hero__layout) {
     justify-content: center;
     height: 100%;
     order: 1;
+    overflow: hidden;
 }
 
 .card--service__icon img {
     filter: brightness(0) invert(1);
-    max-width: 120px;
-    max-height: 120px;
+    max-width: 100%;
+    max-height: 100%;
     width: auto;
     height: auto;
     object-fit: contain;
@@ -1964,6 +1965,15 @@ footer {
 
     .nav {
         position: relative;
+        padding-block: 0.75rem;
+    }
+    
+    .logo span:first-child {
+        font-size: 1.25rem;
+    }
+    
+    .logo span:last-child {
+        font-size: 0.85rem;
     }
 
     .nav-actions {
@@ -2098,6 +2108,22 @@ footer {
         min-height: 160px;
         height: 100%;
         flex: 1;
+        overflow: hidden;
+    }
+    
+    .card--service__icon {
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .card--service__icon img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
     }
     
     /* Efek hover di mobile - selaras dengan card lainnya */
@@ -2546,12 +2572,7 @@ footer {
         visibility: visible;
         opacity: 1;
         color: var(--text-900) !important;
-        max-height: calc(1.3em * 3);
-        display: -webkit-box !important;
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        display: block !important;
     }
     
     .service-modal__title-wrapper > .service-modal__divider {
@@ -2665,11 +2686,18 @@ footer {
 
     .card--service__icon {
         padding: 1.5rem;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .card--service__icon img {
-        max-width: 100px;
-        max-height: 100px;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
     }
 
     .card--service__divider {
@@ -2734,12 +2762,7 @@ footer {
         visibility: visible;
         opacity: 1;
         color: var(--text-900) !important;
-        max-height: calc(1.3em * 3);
-        display: -webkit-box !important;
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        display: block !important;
     }
     
     .service-modal__title-wrapper > .service-modal__divider {
@@ -2857,11 +2880,18 @@ footer {
 
     .card--service__icon {
         padding: 1.25rem;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .card--service__icon img {
-        max-width: 80px;
-        max-height: 80px;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
     }
 
     .card--service__divider {
