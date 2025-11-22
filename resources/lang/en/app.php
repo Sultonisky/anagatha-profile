@@ -41,7 +41,9 @@ return [
 
     'services' => [
         'title' => 'What We Offer',
-        'description' => 'We provide comprehensive recruitment solutions tailored to your organization\'s unique needs. From executive leadership placements to specialized talent pipelines, our services combine data-driven insights with personalized expertise to deliver exceptional results that drive your business forward.',
+        'description' => 'With great pride, we introduce our company\'s latest innovation in the world of technology and data-driven recruitment. In today\'s digital era, finding the right talent is the key to business success. For that reason, we present a solution that combines precise data analytics with deep human insight.
+        Through the platform we have developed, we help companies discover the best candidates faster, more objectively, and more efficiently. We continuously innovate to ensure that the recruitment process is not only seamless, but also highly targeted and capable of delivering long-term results.
+        We extend our gratitude to our clients, partners, and team for their trust and exceptional collaboration. Together, we are shaping a smarter and more human centered future of work.',
         'cards' => [
             'executive' => 'Executive & Professional Recruitment',
             'culture_fit' => 'Corporate Training & Talent Development',
@@ -160,6 +162,16 @@ We believe that the quality of human resources is the main foundation of busines
                 'regex' => 'Message contains invalid characters',
             ],
         ],
+    ],
+
+    'supported_by' => [
+        'title' => 'Supported by',
+    ],
+    'logos' => [
+        'google_ai' => 'Google AI',
+        'kemnaker' => 'Kemnaker logo',
+        'bnsp' => 'BNSP logo',
+        'akulita' => 'Akulita logo',
     ],
 
     'toast' => [

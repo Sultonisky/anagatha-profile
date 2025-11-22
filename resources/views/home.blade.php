@@ -349,6 +349,20 @@
         </div>
     </section>
 
+    <section id="supported_by">
+        <div class="container section-shell section-shell--stack">
+            <div class="section-heading section-heading--left" data-aos="fade-up">
+                <h2 class="section-heading__title">{{ __('app.supported_by.title') }}</h2>
+            </div>
+            <div class="supported-by-logos" data-aos="fade-up" data-aos-delay="100">
+                <img src="/assets/logo-google-ai.png" alt="{{ __('app.logos.google_ai') }}" loading="lazy" decoding="async">
+                <img src="/assets/logo-kemnaker.png" alt="{{ __('app.logos.kemnaker') }}" loading="lazy" decoding="async">
+                <img src="/assets/logo-bnsp.png" alt="{{ __('app.logos.bnsp') }}" loading="lazy" decoding="async">
+                <img src="/assets/logo-akulita.png" alt="{{ __('app.logos.akulita') }}" loading="lazy" decoding="async">
+            </div>
+        </div>
+    </section>
+
     @push('scripts')
         @php
             $contactValidationMessages = __('app.contact.validation');
