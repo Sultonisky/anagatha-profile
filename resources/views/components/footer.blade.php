@@ -18,7 +18,7 @@
             </div>
             <div class="footer-contact">
                 <i class="fa-solid fa-phone" aria-hidden="true"></i>
-                <a href="https://wa.me/6281234567890" target="_blank" rel="noopener">+62 812-3456-7890</a>
+                <a href="https://wa.me/6282125518551" target="_blank" rel="noopener">+62 821-2551-8551</a>
             </div>
             <div class="footer-contact">
                 <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
