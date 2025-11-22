@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <link rel="stylesheet" href="/styles/style.css">
     <link rel="icon" type="image/x-icon" href="/assets/hero-sec.png">
     @stack('head')
@@ -26,14 +26,52 @@
 
     <x-footer />
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" defer></script>
     <script nonce="{{ $cspNonce ?? '' }}">
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-            offset: 100
-        });
+        // Optimized AOS initialization for better scroll performance
+        (function() {
+            let initAttempts = 0;
+            const maxAttempts = 20;
+            
+            function initAOS() {
+                if (typeof AOS !== 'undefined') {
+                    AOS.init({
+                        duration: 500,
+                        easing: 'ease-out-cubic',
+                        once: true,
+                        offset: 80,
+                        mirror: false,
+                        anchorPlacement: 'top-bottom',
+                        disableMutationObserver: true,
+                        throttleDelay: 99,
+                        debounceDelay: 50
+                    });
+                } else if (initAttempts < maxAttempts) {
+                    initAttempts++;
+                    setTimeout(initAOS, 50);
+                }
+            }
+
+            // Wait for DOM and scripts to be ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(initAOS, 100);
+                });
+            } else {
+                setTimeout(initAOS, 100);
+            }
+
+            // Optimized resize handler with debounce
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (typeof AOS !== 'undefined') {
+                        AOS.refresh();
+                    }
+                }, 250);
+            }, { passive: true });
+        })();
     </script>
     @stack('scripts')
     @stack('body_end')

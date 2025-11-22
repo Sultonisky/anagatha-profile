@@ -27,6 +27,21 @@
     scroll-behavior: smooth;
 }
 
+/* Optimize scroll performance */
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Use GPU acceleration for AOS animations */
+[data-aos] {
+    will-change: transform, opacity;
+}
+
+[data-aos].aos-animate {
+    will-change: auto;
+}
+
 *,
 *::before,
 *::after {
@@ -202,6 +217,8 @@ main > .container {
     border-bottom: 1px solid rgba(128, 10, 10, 0.08);
     box-shadow: 0 10px 25px -18px rgba(16, 23, 40, 0.65);
     padding-right: var(--scrollbar-compensation, 0px);
+    will-change: transform;
+    transform: translateZ(0); /* Force GPU acceleration */
 }
 
 .nav {
