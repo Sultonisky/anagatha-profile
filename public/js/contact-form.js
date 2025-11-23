@@ -121,14 +121,14 @@
             },
             phone: {
                 required: true,
-                min: 10,
+                min: 8,
                 max: 15,
                 regex: /^\(\+\d{1,2}\)\s?\d{6,}$/,
                 countryCodeRegex: /^\(\+\d{1,2}\)$/,
                 message: buildMessages('phone', {
                     required: 'Phone number is required',
-                    min: 'Phone number must be at least 10 characters',
-                    max: 'Phone number must not exceed 15 characters',
+                    min: 'Phone number must be at least 8 digits after country code',
+                    max: 'Phone number must not exceed 15 digits after country code',
                     countryCode: 'Please enter a valid country code in format (+X) or (+XX) before continuing',
                     regex: 'Phone number must be in format (+X) YYYYYYYY or (+XX) YYYYYYYY (e.g. (+62) 81234567890, (+1) 2345678900)'
                 })
@@ -173,7 +173,7 @@
             // Special validation for phone: check country code first
             if (fieldName === 'phone' && rules.countryCodeRegex) {
                 // Extract country code part in format (+X) or (+XX)
-                const countryCodeMatch = trimmedValue.match(/^(\(\+\d{1,2}\))/);
+                const countryCodeMatch = trimmedValue.match(/^(\(\+\d{1,2}\))\s?(.*)$/);
                 
                 if (!countryCodeMatch) {
                     // Check if user is still typing country code (without closing parenthesis)
@@ -186,6 +186,7 @@
                 }
                 
                 const countryCode = countryCodeMatch[1];
+                const phoneNumberPart = countryCodeMatch[2] || '';
                 
                 // Check if country code is valid format (+X) or (+XX)
                 if (!rules.countryCodeRegex.test(countryCode)) {
@@ -193,19 +194,34 @@
                 }
                 
                 // If only country code is entered (no phone number yet)
-                if (trimmedValue.length <= countryCode.length + 2) {
+                if (phoneNumberPart.trim().length === 0) {
                     return { valid: false, error: rules.message.countryCode };
                 }
-            }
+                
+                // Extract only digits from phone number part (after country code)
+                const phoneDigits = phoneNumberPart.replace(/\D/g, '');
+                
+                // Validate phone number digits length (not total string length)
+                if (phoneDigits.length < rules.min) {
+                    return { valid: false, error: rules.message.min };
+                }
+                
+                if (phoneDigits.length > rules.max) {
+                    return { valid: false, error: rules.message.max };
+                }
+                
+                // Skip general min/max check for phone (we already validated digits)
+                // Continue to regex check
+            } else {
+                // Check min length (for non-phone fields)
+                if (rules.min && trimmedValue.length < rules.min) {
+                    return { valid: false, error: rules.message.min };
+                }
 
-            // Check min length
-            if (rules.min && trimmedValue.length < rules.min) {
-                return { valid: false, error: rules.message.min };
-            }
-
-            // Check max length
-            if (rules.max && trimmedValue.length > rules.max) {
-                return { valid: false, error: rules.message.max };
+                // Check max length (for non-phone fields)
+                if (rules.max && trimmedValue.length > rules.max) {
+                    return { valid: false, error: rules.message.max };
+                }
             }
 
             // Check regex pattern
@@ -379,20 +395,17 @@
                     const countryCode = countryCodeMatch[1];
                     const afterCountryCode = value.substring(countryCode.length + 1);
                     
-                    // If country code is complete (min 2 chars: +X, max 3 chars: +XX) and no closing parenthesis yet
-                    if (countryCode.length >= 2 && countryCode.length <= 3) {
-                        if (!afterCountryCode.startsWith(')')) {
-                            // Check if user is typing digit after country code (ready to close)
-                            if (afterCountryCode.length > 0 && /^\d/.test(afterCountryCode)) {
-                                // Insert closing parenthesis before the digit
-                                value = '(' + countryCode + ') ' + afterCountryCode;
-                                newCursorPos = Math.min(newCursorPos + 2, value.length);
-                            } else if (afterCountryCode.length === 0 && countryCode.length >= 2) {
-                                // Country code complete, add closing parenthesis and space
-                                value = '(' + countryCode + ') ';
-                                newCursorPos = value.length;
-                            }
+                    // Don't auto-close parenthesis automatically
+                    // Only close when user types a digit after the country code
+                    // This allows user to type (+X) or (+XX) without premature closing
+                    if (!afterCountryCode.startsWith(')')) {
+                        // Check if user is typing a digit after the country code
+                        if (afterCountryCode.length > 0 && /^\d/.test(afterCountryCode)) {
+                            // User typed a digit after country code, close parenthesis before the digit
+                            value = '(' + countryCode + ') ' + afterCountryCode;
+                            newCursorPos = Math.min(newCursorPos + 2, value.length);
                         }
+                        // If no digit after country code, don't close - let user continue typing
                     }
                 }
                 
