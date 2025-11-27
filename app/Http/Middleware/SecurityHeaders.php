@@ -36,13 +36,13 @@ class SecurityHeaders
         // Removed 'unsafe-eval' as it's not needed and dangerous
         $csp = "default-src 'self'; " .
                "script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; " .
-               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; " .
+               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; " .
                "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; " .
                "img-src 'self' data: https: blob:; " .
                "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com; " .
                "frame-ancestors 'self'; " .
                "base-uri 'self'; " .
-               "form-action 'self';";
+               "form-action 'self' http://127.0.0.1:* https://127.0.0.1:* http://localhost:* https://localhost:*;";
         $response->headers->set('Content-Security-Policy', $csp);
 
         // X-Frame-Options

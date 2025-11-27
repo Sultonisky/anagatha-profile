@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
+    public function landing()
+    {
+        return view('landing-pages');
+    }
+
     public function home()
     {
         return view('home');
@@ -41,5 +46,10 @@ class PageController extends Controller
         // In real app, fetch job from database
         // For now, return view with default job data
         return view('job_detail');
+    }
+
+    public function jobApplication()
+    {
+        return view('form-jobs');
     }
 }

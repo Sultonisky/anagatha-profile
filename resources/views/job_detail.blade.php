@@ -91,9 +91,9 @@
                                 </span>
                             @endforeach
                         </div>
-                        <button type="button" class="job-detail-header__apply cta-primary cta-primary--orange">
+                        <a href="{{ route('job.apply', $job['id']) }}" class="job-detail-header__apply cta-primary cta-primary--orange">
                             Apply Now
-                        </button>
+                        </a>
                     </div>
                 </div>
                 <div class="job-detail-header__meta">
@@ -248,9 +248,9 @@
                         <div class="job-detail-footer-bar__title">{{ $job['title'] }}</div>
                     </div>
                 </div>
-                <button type="button" class="job-detail-footer-bar__apply cta-primary cta-primary--orange">
+                <a href="{{ route('job.apply', $job['id']) }}" class="job-detail-footer-bar__apply cta-primary cta-primary--orange">
                     Apply Now
-                </button>
+                </a>
             </div>
         </div>
     </section>
