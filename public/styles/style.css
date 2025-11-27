@@ -68,6 +68,9 @@ body {
     position: relative;
     padding-top: var(--header-height);
     padding-right: var(--scrollbar-compensation, 0px);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 html.modal-open,
@@ -83,7 +86,13 @@ body.modal-open {
 
 .page {
     background-color: var(--surface-200);
-    min-height: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.page main {
+    flex: 1;
 }
 
 img {
@@ -145,6 +154,7 @@ textarea {
 
 main {
     padding-block: 4rem 2rem;
+    flex: 1;
 }
 
 main > .container {
@@ -1697,6 +1707,28 @@ footer {
     overflow: visible;
     position: relative;
     min-height: auto;
+    margin-top: auto;
+    flex-shrink: 0;
+    z-index: 1;
+    visibility: visible;
+    opacity: 1;
+}
+
+footer * {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+footer[data-aos],
+footer [data-aos] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+}
+
+footer .aos-animate {
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .footer-grid {
@@ -1704,6 +1736,8 @@ footer {
     gap: 2.5rem 3rem;
     grid-template-columns: minmax(240px, 1.2fr) minmax(180px, 0.9fr) minmax(280px, 1.3fr);
     align-items: start;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 /* Footer Branding */
@@ -1875,13 +1909,14 @@ footer {
     color: rgba(245, 232, 232, 0.75);
     font-size: 0.9rem;
     line-height: 1.65;
-    opacity: 1;
-    visibility: visible;
+    opacity: 1 !important;
+    visibility: visible !important;
     min-height: auto;
     position: relative;
-    z-index: 1;
+    z-index: 2;
     transform: translateZ(0);
     will-change: transform, opacity;
+    display: block !important;
 }
 
 .footer-bottom p {
@@ -3380,6 +3415,14 @@ footer {
 
 .job-listing-page main {
     padding-block: 0;
+    min-height: calc(100vh - var(--header-height));
+    display: flex;
+    flex-direction: column;
+}
+
+.job-listing-page main > section:last-of-type {
+    flex: 1;
+    min-height: calc(100vh - var(--header-height) - 200px);
 }
 
 .job-search-hero {
@@ -3866,8 +3909,10 @@ footer {
 }
 
 .job-listings-section {
-    padding-block: 3rem 5rem;
+    padding-block: 3rem 8rem;
     background: var(--surface-200);
+    min-height: 60vh;
+    position: relative;
 }
 
 .job-listings-section__header {
@@ -3886,6 +3931,8 @@ footer {
 .job-cards-grid--listing {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
+    min-height: 200px;
+    padding-bottom: 2rem;
 }
 
 @media (min-width: 1024px) {
@@ -3980,7 +4027,8 @@ footer {
     }
 
     .job-listings-section {
-        padding-block: 2rem 3rem;
+        padding-block: 2rem 6rem;
+        min-height: 50vh;
     }
 
     .job-cards-grid--listing {
@@ -4111,6 +4159,46 @@ footer {
         height: 36px;
         font-size: 0.85rem;
     }
+}
+
+/* ==========================================================================
+   No Results Message
+   ========================================================================== */
+
+.no-results-message {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: var(--surface-100);
+    border-radius: var(--radius-card);
+    margin-top: 2rem;
+}
+
+.no-results-message__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.no-results-message__content i {
+    font-size: 3rem;
+    color: var(--text-400);
+    margin-bottom: 0.5rem;
+}
+
+.no-results-message__content h3 {
+    font-size: 1.5rem;
+    color: var(--text-700);
+    font-weight: 600;
+    margin: 0;
+}
+
+.no-results-message__content p {
+    font-size: 1rem;
+    color: var(--text-500);
+    margin: 0;
 }
 
 /* ==========================================================================

@@ -19,7 +19,7 @@
         salary: document.getElementById('filterSalary'),
         industry: document.getElementById('filterIndustry'),
         experience: document.getElementById('filterExperience'),
-        event: document.getElementById('filterEvent')
+        degree: document.getElementById('filterDegree')
     };
 
     // Main filter selects (in the hero section)
@@ -109,7 +109,7 @@
      * Sync filter values from main selects to modal selects
      */
     function syncFiltersToModal() {
-        if (mainFilterSelects.length >= 5) {
+        if (mainFilterSelects.length >= 4) {
             if (filterSelects.workPreference) {
                 filterSelects.workPreference.value = mainFilterSelects[0].value || '';
             }
@@ -122,9 +122,7 @@
             if (filterSelects.experience) {
                 filterSelects.experience.value = mainFilterSelects[3].value || '';
             }
-            if (filterSelects.event) {
-                filterSelects.event.value = mainFilterSelects[4].value || '';
-            }
+            // Note: degree filter only exists in modal, not in main filter bar
         }
     }
 
@@ -132,7 +130,7 @@
      * Sync filter values from modal selects to main selects
      */
     function syncFiltersFromModal() {
-        if (mainFilterSelects.length >= 5) {
+        if (mainFilterSelects.length >= 4) {
             if (filterSelects.workPreference) {
                 const newValue = filterSelects.workPreference.value || '';
                 if (mainFilterSelects[0].value !== newValue) {
@@ -179,17 +177,7 @@
                     mainFilterSelects[3].dispatchEvent(changeEvent);
                 }
             }
-            if (filterSelects.event) {
-                const newValue = filterSelects.event.value || '';
-                if (mainFilterSelects[4].value !== newValue) {
-                    mainFilterSelects[4].value = newValue;
-                    if (mainFilterSelects[4]._customDropdown) {
-                        mainFilterSelects[4]._customDropdown.updateButtonText();
-                    }
-                    const changeEvent = new Event('change', { bubbles: true });
-                    mainFilterSelects[4].dispatchEvent(changeEvent);
-                }
-            }
+            // Note: degree filter only exists in modal, not in main filter bar
         }
     }
 
@@ -211,8 +199,13 @@
             }
         });
 
-        // Apply filters (which will trigger search/filter logic)
-        applyFilters();
+        // Clear all filters including search
+        if (window.clearAllJobFilters && typeof window.clearAllJobFilters === 'function') {
+            window.clearAllJobFilters();
+        } else {
+            // Apply filters (which will trigger search/filter logic)
+            applyFilters();
+        }
     }
 
     /**
@@ -225,21 +218,13 @@
         // Close modal
         closeModal();
 
-        // Here you can add logic to filter jobs based on selected filters
-        // For now, we'll just log the filter values
-        const filters = {
-            workPreference: filterSelects.workPreference?.value || '',
-            salary: filterSelects.salary?.value || '',
-            industry: filterSelects.industry?.value || '',
-            experience: filterSelects.experience?.value || '',
-            event: filterSelects.event?.value || ''
-        };
-
-        console.log('Applied filters:', filters);
-
-        // TODO: Add actual filtering logic here
-        // You can filter the job cards based on these filter values
-        // and update the pagination accordingly
+        // Trigger filter update
+        if (window.jobSearchFilter && typeof window.jobSearchFilter.performSearch === 'function') {
+            window.jobSearchFilter.performSearch();
+        } else {
+            // Dispatch event for other scripts to listen
+            document.dispatchEvent(new CustomEvent('filtersApplied'));
+        }
     }
 
     // Event listeners

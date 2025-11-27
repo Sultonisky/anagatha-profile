@@ -65,11 +65,6 @@
                             <option value="3-5">3-5 Years</option>
                             <option value="5+">5+ Years</option>
                         </select>
-                        <select class="job-filter-select">
-                            <option value="">Event</option>
-                            <option value="job-fair">Job Fair</option>
-                            <option value="recruitment">Recruitment Day</option>
-                        </select>
                     </div>
                     <div class="job-filters__actions">
                         <button type="button" class="job-filter-button" id="openFilterModal">
@@ -77,17 +72,6 @@
                             All Filters
                         </button>
                         <a href="#" class="job-filter-clear" id="clearAllFilters">Clear All</a>
-                    </div>
-                </div>
-
-                <div class="hot-search-tags" data-aos="fade-up" data-aos-delay="150">
-                    <span class="hot-search-tags__label">Hot Search:</span>
-                    <div class="hot-search-tags__list">
-                        <button type="button" class="hot-search-tag">Management Trainee</button>
-                        <button type="button" class="hot-search-tag">Channel Management</button>
-                        <button type="button" class="hot-search-tag">Drafter</button>
-                        <button type="button" class="hot-search-tag">Project Manager</button>
-                        <button type="button" class="hot-search-tag">CMF Designer</button>
                     </div>
                 </div>
             </div>
@@ -468,7 +452,49 @@
                     ];
                 @endphp
                 @foreach($jobs as $index => $job)
-                    <article class="job-card" data-job-index="{{ $index }}" data-aos="fade-up" data-aos-delay="{{ ($index % 3) * 100 }}">
+                    @php
+                        $workPreference = '';
+                        $experienceLevel = '';
+                        foreach($job['tags'] as $tag) {
+                            if (in_array(strtolower($tag), ['wfo', 'wfh', 'hybrid'])) {
+                                $workPreference = strtolower($tag);
+                            }
+                            if (stripos($tag, 'entry') !== false) {
+                                $experienceLevel = 'entry';
+                            } elseif (stripos($tag, 'senior') !== false) {
+                                $experienceLevel = '5+';
+                            } elseif (preg_match('/\d+-\d+/', $tag)) {
+                                $experienceLevel = preg_match('/1-3/', $tag) ? '1-3' : '3-5';
+                            }
+                        }
+                        // Extract salary range for filtering
+                        $salaryValue = 0;
+                        if (preg_match('/IDR\s*([\d,]+)/', $job['salary'], $matches)) {
+                            $salaryValue = (int)str_replace(',', '', $matches[1]);
+                        }
+                        $salaryRange = '';
+                        if ($salaryValue > 0) {
+                            if ($salaryValue < 5000000) {
+                                $salaryRange = '0-5';
+                            } elseif ($salaryValue < 10000000) {
+                                $salaryRange = '5-10';
+                            } elseif ($salaryValue < 20000000) {
+                                $salaryRange = '10-20';
+                            } else {
+                                $salaryRange = '20+';
+                            }
+                        }
+                    @endphp
+                    <article class="job-card" 
+                        data-job-index="{{ $index }}" 
+                        data-job-title="{{ strtolower($job['title']) }}"
+                        data-job-company="{{ strtolower($job['company']) }}"
+                        data-job-location="{{ strtolower($job['location']) }}"
+                        data-work-preference="{{ $workPreference }}"
+                        data-salary-range="{{ $salaryRange }}"
+                        data-experience-level="{{ $experienceLevel }}"
+                        data-aos="fade-up" 
+                        data-aos-delay="{{ ($index % 3) * 100 }}">
                         <div class="job-card__header">
                             <div class="job-card__logo">
                                 <img src="{{ $job['logo'] }}" alt="{{ $job['company'] }}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -596,11 +622,15 @@
                         </select>
                     </div>
                     <div class="filter-modal__group">
-                        <label class="filter-modal__label">Event</label>
-                        <select class="filter-modal__select" id="filterEvent">
-                            <option value="">All Events</option>
-                            <option value="job-fair">Job Fair</option>
-                            <option value="recruitment">Recruitment Day</option>
+                        <label class="filter-modal__label">Minimum Degree</label>
+                        <select class="filter-modal__select" id="filterDegree">
+                            <option value="">All Degrees</option>
+                            <option value="senior-high-school">Senior High School</option>
+                            <option value="diploma">Diploma</option>
+                            <option value="bachelor">Bachelor</option>
+                            <option value="master">Master</option>
+                            <option value="mba">MBA</option>
+                            <option value="phd">Ph.D</option>
                         </select>
                     </div>
                 </div>
@@ -615,6 +645,7 @@
     @push('scripts')
         <script src="/js/custom-dropdown.js"></script>
         <script src="/js/job-pagination.js"></script>
+        <script src="/js/job-search-filter.js"></script>
         <script src="/js/filter-modal.js"></script>
     @endpush
 @endsection
