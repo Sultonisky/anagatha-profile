@@ -37,7 +37,28 @@
                     <span>or use your email for login:</span>
                 </div>
 
-                <div class="register-form" id="loginForm">
+                <form method="POST" action="{{ route('login') }}" class="register-form" id="loginForm">
+                    @csrf
+
+                    {{-- Error Messages --}}
+                    @if($errors->any())
+                        <div class="alert alert-danger" role="alert" style="margin-bottom: 1.5rem; padding: 0.75rem 1rem; background-color: #fee; border: 1px solid #fcc; border-radius: 0.5rem; color: #c33;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">Login Failed</div>
+                            <ul style="margin: 0; padding-left: 1.5rem;">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    {{-- Success Message (if redirected from registration) --}}
+                    @if(session('status'))
+                        <div class="alert alert-success" role="alert" style="margin-bottom: 1.5rem; padding: 0.75rem 1rem; background-color: #dfd; border: 1px solid #cfc; border-radius: 0.5rem; color: #3c3;">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
                     {{-- Email Field --}}
                     <div class="form-group">
                         <div class="form-input-wrapper">
@@ -46,10 +67,17 @@
                                 type="email" 
                                 id="email" 
                                 name="email" 
-                                class="form-input" 
+                                class="form-input @error('email') is-invalid @enderror" 
                                 placeholder="Email"
+                                value="{{ old('email') }}"
+                                required
+                                autofocus
+                                autocomplete="email"
                             />
                         </div>
+                        @error('email')
+                            <span class="form-error" style="display: block; margin-top: 0.5rem; color: #c33; font-size: 0.875rem;">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     {{-- Password Field --}}
@@ -60,24 +88,43 @@
                                 type="password" 
                                 id="password" 
                                 name="password" 
-                                class="form-input" 
+                                class="form-input @error('password') is-invalid @enderror" 
                                 placeholder="Password"
+                                required
+                                autocomplete="current-password"
                             />
                             <button type="button" class="password-toggle" aria-label="Toggle password visibility">
                                 <i class="fa-solid fa-eye" aria-hidden="true"></i>
                             </button>
                         </div>
+                        @error('password')
+                            <span class="form-error" style="display: block; margin-top: 0.5rem; color: #c33; font-size: 0.875rem;">{{ $message }}</span>
+                        @enderror
                         {{-- Forgot Password Link --}}
                         <div class="form-forgot-password">
                             <a href="{{ route('password.request') }}" class="forgot-password-link">Forgot Password?</a>
                         </div>
                     </div>
 
+                    {{-- Remember Me --}}
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.875rem; color: #666;">
+                            <input 
+                                type="checkbox" 
+                                name="remember" 
+                                id="remember"
+                                style="margin-right: 0.5rem; width: 1rem; height: 1rem; cursor: pointer;"
+                                {{ old('remember') ? 'checked' : '' }}
+                            />
+                            <span>Remember me</span>
+                        </label>
+                    </div>
+
                     {{-- Submit Button --}}
-                    <a href="{{ route('home') }}" class="register-submit-btn" style="text-decoration: none; display: inline-block; text-align: center; width: 100%;">
+                    <button type="submit" class="register-submit-btn">
                         Login
-                    </a>
-                </div>
+                    </button>
+                </form>
 
                 {{-- Register Link --}}
                 <div class="register-footer">
@@ -103,7 +150,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     // Password toggle functionality
     document.addEventListener('DOMContentLoaded', function() {
         const passwordToggles = document.querySelectorAll('.password-toggle');
@@ -125,11 +172,67 @@
             });
         });
 
-        // Sign In is now a direct link, no JavaScript needed
-        // But we can add a console log to verify it's working
-        const signInLink = document.querySelector('.register-submit-btn');
-        if (signInLink) {
-            console.log('Sign In link found:', signInLink.href);
+        // Form validation
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                // Clear previous invalid states
+                loginForm.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                loginForm.querySelectorAll('.form-error').forEach(el => el.remove());
+
+                let isValid = true;
+
+                // Validate email
+                if (!email) {
+                    isValid = false;
+                    const emailInput = document.getElementById('email');
+                    emailInput.classList.add('is-invalid');
+                    const errorSpan = document.createElement('span');
+                    errorSpan.classList.add('form-error');
+                    errorSpan.style.cssText = 'display: block; margin-top: 0.5rem; color: #c33; font-size: 0.875rem;';
+                    errorSpan.textContent = 'Email is required.';
+                    emailInput.closest('.form-group').appendChild(errorSpan);
+                } else {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        isValid = false;
+                        const emailInput = document.getElementById('email');
+                        emailInput.classList.add('is-invalid');
+                        const errorSpan = document.createElement('span');
+                        errorSpan.classList.add('form-error');
+                        errorSpan.style.cssText = 'display: block; margin-top: 0.5rem; color: #c33; font-size: 0.875rem;';
+                        errorSpan.textContent = 'Please enter a valid email address.';
+                        emailInput.closest('.form-group').appendChild(errorSpan);
+                    }
+                }
+
+                // Validate password
+                if (!password) {
+                    isValid = false;
+                    const passwordInput = document.getElementById('password');
+                    passwordInput.classList.add('is-invalid');
+                    const errorSpan = document.createElement('span');
+                    errorSpan.classList.add('form-error');
+                    errorSpan.style.cssText = 'display: block; margin-top: 0.5rem; color: #c33; font-size: 0.875rem;';
+                    errorSpan.textContent = 'Password is required.';
+                    passwordInput.closest('.form-group').appendChild(errorSpan);
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    const firstError = loginForm.querySelector('.is-invalid');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstError.focus();
+                    }
+                    return false;
+                }
+
+                // If validation passes, form will submit naturally
+            });
         }
     });
 </script>
