@@ -326,128 +326,148 @@
 
 @push('scripts')
     <script>
-        // Area Chart - User Growth Over Time
-        var areaChartOptions = {
-            series: [{
-                name: 'New Users',
-                data: @json($userGrowthSeries ?? [])
-            }],
-            chart: {
-                type: 'area',
-                height: 350,
-                toolbar: {
-                    show: false
-                }
-            },
-            colors: ['#556ee6'],
-            dataLabels: {
-                enabled: false
-            },
-            stroke: {
-                curve: 'smooth',
-                width: 2
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.4,
-                    opacityTo: 0.1,
-                    stops: [0, 100]
-                }
-            },
-            xaxis: {
-                categories: @json($userGrowthCategories ?? [])
-            },
-            tooltip: {
-                y: {
-                    formatter: function(val) {
-                        return val + " users"
+        // Wait for jQuery and ApexCharts to be loaded
+        function initDashboardCharts() {
+            // Check if required libraries are loaded
+            if (typeof jQuery === 'undefined' || typeof ApexCharts === 'undefined') {
+                // Retry after a short delay
+                setTimeout(initDashboardCharts, 100);
+                return;
+            }
+
+            // Use jQuery's document ready to ensure DOM is loaded
+            jQuery(document).ready(function($) {
+                // Area Chart - User Growth Over Time
+                var areaChartOptions = {
+                    series: [{
+                        name: 'New Users',
+                        data: @json($userGrowthSeries ?? [])
+                    }],
+                    chart: {
+                        type: 'area',
+                        height: 350,
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    colors: ['#556ee6'],
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        curve: 'smooth',
+                        width: 2
+                    },
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.4,
+                            opacityTo: 0.1,
+                            stops: [0, 100]
+                        }
+                    },
+                    xaxis: {
+                        categories: @json($userGrowthCategories ?? [])
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function(val) {
+                                return val + " users"
+                            }
+                        }
+                    },
+                    markers: {
+                        size: 4,
+                        hover: {
+                            size: 6
+                        }
                     }
-                }
-            },
-            markers: {
-                size: 4,
-                hover: {
-                    size: 6
-                }
-            }
-        };
+                };
 
-        var areaChart = new ApexCharts(document.querySelector("#area_chart"), areaChartOptions);
-        areaChart.render();
+                var areaChart = new ApexCharts(document.querySelector("#area_chart"), areaChartOptions);
+                areaChart.render();
 
-        // Column Line Chart - Job Listings Growth
-        var columnLineChartOptions = {
-            series: [{
-                name: 'Job Listings',
-                type: 'column',
-                data: @json($jobListingsGrowthSeries ?? [])
-            }],
-            chart: {
-                height: 350,
-                type: 'line',
-                toolbar: {
-                    show: false
-                }
-            },
-            stroke: {
-                width: [0, 4]
-            },
-            colors: ['#34c38f'],
-            dataLabels: {
-                enabled: true,
-                enabledOnSeries: [0]
-            },
-            xaxis: {
-                categories: @json($jobListingsGrowthCategories ?? []),
-                type: 'category'
-            },
-            yaxis: [{
-                title: {
-                    text: 'Count',
-                }
-            }],
-            tooltip: {
-                y: {
-                    formatter: function(val) {
-                        return val + " listings"
+                // Column Line Chart - Job Listings Growth
+                var columnLineChartOptions = {
+                    series: [{
+                        name: 'Job Listings',
+                        type: 'column',
+                        data: @json($jobListingsGrowthSeries ?? [])
+                    }],
+                    chart: {
+                        height: 350,
+                        type: 'line',
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    stroke: {
+                        width: [0, 4]
+                    },
+                    colors: ['#34c38f'],
+                    dataLabels: {
+                        enabled: true,
+                        enabledOnSeries: [0]
+                    },
+                    xaxis: {
+                        categories: @json($jobListingsGrowthCategories ?? []),
+                        type: 'category'
+                    },
+                    yaxis: [{
+                        title: {
+                            text: 'Count',
+                        }
+                    }],
+                    tooltip: {
+                        y: {
+                            formatter: function(val) {
+                                return val + " listings"
+                            }
+                        }
+                    },
+                    markers: {
+                        size: 4,
+                        hover: {
+                            size: 6
+                        }
                     }
-                }
-            },
-            markers: {
-                size: 4,
-                hover: {
-                    size: 6
-                }
-            }
-        };
+                };
 
-        var columnLineChart = new ApexCharts(document.querySelector("#column_line_chart"), columnLineChartOptions);
-        columnLineChart.render();
+                var columnLineChart = new ApexCharts(document.querySelector("#column_line_chart"), columnLineChartOptions);
+                columnLineChart.render();
 
-        // Donut Chart
-        var donutChartOptions = {
-            series: [{{ $adminCount ?? 0 }}, {{ $userCount ?? 0 }}, {{ $recruiterCount ?? 0 }}],
-            chart: {
-                type: 'donut',
-                height: 300
-            },
-            labels: ['Admins', 'Users', 'Recruiters'],
-            colors: ['#f46a6a', '#556ee6', '#34c38f'],
-            legend: {
-                show: true,
-                position: 'bottom'
-            },
-            dataLabels: {
-                enabled: true,
-                formatter: function(val) {
-                    return val.toFixed(1) + "%"
-                }
-            }
-        };
+                // Donut Chart
+                var donutChartOptions = {
+                    series: [{{ $adminCount ?? 0 }}, {{ $userCount ?? 0 }}, {{ $recruiterCount ?? 0 }}],
+                    chart: {
+                        type: 'donut',
+                        height: 300
+                    },
+                    labels: ['Admins', 'Users', 'Recruiters'],
+                    colors: ['#f46a6a', '#556ee6', '#34c38f'],
+                    legend: {
+                        show: true,
+                        position: 'bottom'
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function(val) {
+                            return val.toFixed(1) + "%"
+                        }
+                    }
+                };
 
-        var donutChart = new ApexCharts(document.querySelector("#donut-chart"), donutChartOptions);
-        donutChart.render();
+                var donutChart = new ApexCharts(document.querySelector("#donut-chart"), donutChartOptions);
+                donutChart.render();
+            });
+        }
+
+        // Start initialization
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDashboardCharts);
+        } else {
+            initDashboardCharts();
+        }
     </script>
 @endpush
