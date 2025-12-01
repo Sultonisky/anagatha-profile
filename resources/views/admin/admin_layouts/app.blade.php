@@ -91,45 +91,45 @@
     <!-- END layout-wrapper -->
 
     <!-- JAVASCRIPT -->
-<script src="{{ asset('dashboard/libs/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/metismenu/metisMenu.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/simplebar/simplebar.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/node-waves/waves.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/jquery/jquery.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/metismenu/metisMenu.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/simplebar/simplebar.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/node-waves/waves.min.js"></script>
 
 <!-- apexcharts -->
-<script src="{{ asset('dashboard/libs/apexcharts/apexcharts.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/apexcharts/apexcharts.min.js"></script>
 
 <!-- jquery.vectormap map -->
-<script src="{{ asset('dashboard/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-us-merc-en.js') }}">
+<script src="{{ $baseUrl }}/dashboard/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-us-merc-en.js">
 </script>
 
 <!-- Required datatable js -->
-<script src="{{ asset('dashboard/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 
 <!-- Responsive examples -->
-<script src="{{ asset('dashboard/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
-<script src="{{ asset('dashboard/js/pages/dashboard.init.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/js/pages/dashboard.init.js"></script>
 
 <!-- Datatables Buttons JS -->
-<script src="{{ asset('dashboard/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/jszip/jszip.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/pdfmake/build/pdfmake.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/pdfmake/build/vfs_fonts.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/jszip/jszip.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/pdfmake/build/pdfmake.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/pdfmake/build/vfs_fonts.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 
 <!-- Datatable init js -->
-<script src="{{ asset('dashboard/js/pages/datatables.init.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/js/pages/datatables.init.js"></script>
 
 <!-- App js -->
-<script src="{{ asset('dashboard/js/app.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/js/app.js"></script>
 
 <!-- Include reusable DataTables script -->
 @include('admin.admin_layouts.partials.datatables-script')
