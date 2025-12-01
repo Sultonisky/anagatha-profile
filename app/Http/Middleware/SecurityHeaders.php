@@ -39,13 +39,15 @@ class SecurityHeaders
         // Removed 'unsafe-eval' as it's not needed and dangerous
         if ($isAdminRoute) {
             // More permissive CSP for admin dashboard to allow all dashboard assets
+            // Using https: for script-src-elem and style-src-elem to allow all HTTPS resources
             $csp = "default-src 'self'; " .
-                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; " .
+                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " .
+                   "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https:; " .
                    "style-src 'self' 'unsafe-inline' https:; " .
                    "style-src-elem 'self' 'unsafe-inline' https:; " .
                    "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; " .
                    "img-src 'self' data: https: blob:; " .
-                   "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com; " .
+                   "connect-src 'self' https:; " .
                    "frame-ancestors 'self'; " .
                    "base-uri 'self'; " .
                    "form-action 'self' http://127.0.0.1:* https://127.0.0.1:* http://localhost:* https://localhost:*;";
