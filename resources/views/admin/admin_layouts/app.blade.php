@@ -23,11 +23,7 @@
         $baseUrl = url('/');
     @endphp
 
-    <!-- Preload critical CSS -->
-    <link rel="preload" href="{{ $baseUrl }}/dashboard/css/bootstrap.min.css?v={{ $cssVersion }}" as="style" />
-    <link rel="preload" href="{{ $baseUrl }}/dashboard/css/app.min.css?v={{ $cssVersion }}" as="style" />
-    
-    <!-- Bootstrap Css -->
+    <!-- Bootstrap Css - Load first as it's the foundation -->
     <link href="{{ $baseUrl }}/dashboard/css/bootstrap.min.css?v={{ $cssVersion }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
 
     <!-- DataTables -->
@@ -49,6 +45,35 @@
     <link href="{{ $baseUrl }}/dashboard/css/admin-custom.css?v={{ $cssVersion }}" rel="stylesheet" type="text/css" />
 
     @stack('styles')
+    
+    <!-- Ensure CSS is loaded -->
+    <script>
+        // Check if critical CSS files are loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            var bootstrapLink = document.getElementById('bootstrap-style');
+            var appLink = document.getElementById('app-style');
+            
+            if (bootstrapLink && !bootstrapLink.sheet) {
+                console.warn('Bootstrap CSS not loaded, attempting to reload...');
+                var newLink = document.createElement('link');
+                newLink.id = 'bootstrap-style';
+                newLink.rel = 'stylesheet';
+                newLink.type = 'text/css';
+                newLink.href = '{{ $baseUrl }}/dashboard/css/bootstrap.min.css?v={{ $cssVersion }}';
+                document.head.appendChild(newLink);
+            }
+            
+            if (appLink && !appLink.sheet) {
+                console.warn('App CSS not loaded, attempting to reload...');
+                var newLink = document.createElement('link');
+                newLink.id = 'app-style';
+                newLink.rel = 'stylesheet';
+                newLink.type = 'text/css';
+                newLink.href = '{{ $baseUrl }}/dashboard/css/app.min.css?v={{ $cssVersion }}';
+                document.head.appendChild(newLink);
+            }
+        });
+    </script>
 </head>
 
 
