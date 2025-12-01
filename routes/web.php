@@ -23,7 +23,20 @@ Route::get('/health', function () {
 Route::get('/dashboard/{path}', function ($path) {
     $filePath = public_path('dashboard/' . $path);
     if (file_exists($filePath) && is_file($filePath)) {
-        return response()->file($filePath);
+        $response = response()->file($filePath);
+        
+        // Set proper content type for CSS and JS files
+        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+        if ($extension === 'css') {
+            $response->header('Content-Type', 'text/css');
+        } elseif ($extension === 'js') {
+            $response->header('Content-Type', 'application/javascript');
+        }
+        
+        // Set cache headers
+        $response->header('Cache-Control', 'public, max-age=31536000');
+        
+        return $response;
     }
     abort(404);
 })->where('path', '.*')->name('dashboard.asset');

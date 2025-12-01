@@ -19,28 +19,30 @@
         if (app()->environment('local')) {
             $cssVersion = $cssVersion . '.' . time();
         }
+        // Ensure absolute URL for CSS files
+        $baseUrl = url('/');
     @endphp
 
     <!-- Bootstrap Css -->
-    <link href="{{ asset('dashboard/css/bootstrap.min.css') }}?v={{ $cssVersion }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <link href="{{ $baseUrl }}/dashboard/css/bootstrap.min.css?v={{ $cssVersion }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
 
     <!-- DataTables -->
-    <link href="{{ asset('dashboard/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}?v={{ $cssVersion }}" rel="stylesheet"
+    <link href="{{ $baseUrl }}/dashboard/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css?v={{ $cssVersion }}" rel="stylesheet"
         type="text/css" />
 
         <!-- Datatables Buttons CSS -->
-<link href="{{ asset('dashboard/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}?v={{ $cssVersion }}" rel="stylesheet">
+<link href="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css?v={{ $cssVersion }}" rel="stylesheet">
 
 
     <!-- Responsive datatable examples -->
-    <link href="{{ asset('dashboard/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}?v={{ $cssVersion }}"
+    <link href="{{ $baseUrl }}/dashboard/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css?v={{ $cssVersion }}"
         rel="stylesheet" type="text/css" />
     <!-- Icons Css -->
-    <link href="{{ asset('dashboard/css/icons.min.css') }}?v={{ $cssVersion }}" rel="stylesheet" type="text/css" />
+    <link href="{{ $baseUrl }}/dashboard/css/icons.min.css?v={{ $cssVersion }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
-    <link href="{{ asset('dashboard/css/app.min.css') }}?v={{ $cssVersion }}" id="app-style" rel="stylesheet" type="text/css" />
+    <link href="{{ $baseUrl }}/dashboard/css/app.min.css?v={{ $cssVersion }}" id="app-style" rel="stylesheet" type="text/css" />
     <!-- Admin Custom Color Override -->
-    <link href="{{ asset('dashboard/css/admin-custom.css') }}?v={{ $cssVersion }}" rel="stylesheet" type="text/css" />
+    <link href="{{ $baseUrl }}/dashboard/css/admin-custom.css?v={{ $cssVersion }}" rel="stylesheet" type="text/css" />
 
     @stack('styles')
 </head>
