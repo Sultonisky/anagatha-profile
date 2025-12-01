@@ -38,14 +38,14 @@ class SecurityHeaders
         // Using nonce instead of 'unsafe-inline' for better security
         // Removed 'unsafe-eval' as it's not needed and dangerous
         if ($isAdminRoute) {
-            // More permissive CSP for admin dashboard to allow all dashboard assets
-            // Using https: for script-src-elem and style-src-elem to allow all HTTPS resources
-            $csp = "default-src 'self'; " .
-                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " .
-                   "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https:; " .
-                   "style-src 'self' 'unsafe-inline' https:; " .
-                   "style-src-elem 'self' 'unsafe-inline' https:; " .
-                   "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; " .
+            // Very permissive CSP for admin dashboard to allow all dashboard assets
+            // This ensures CSS and JS from dashboard directory can load properly
+            $csp = "default-src 'self' https: data: blob:; " .
+                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; " .
+                   "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; " .
+                   "style-src 'self' 'unsafe-inline' https: data: blob:; " .
+                   "style-src-elem 'self' 'unsafe-inline' https: data: blob:; " .
+                   "font-src 'self' https: data: blob:; " .
                    "img-src 'self' data: https: blob:; " .
                    "connect-src 'self' https:; " .
                    "frame-ancestors 'self'; " .
