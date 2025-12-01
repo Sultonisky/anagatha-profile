@@ -23,6 +23,10 @@
         $baseUrl = url('/');
     @endphp
 
+    <!-- Preload critical CSS -->
+    <link rel="preload" href="{{ $baseUrl }}/dashboard/css/bootstrap.min.css?v={{ $cssVersion }}" as="style" />
+    <link rel="preload" href="{{ $baseUrl }}/dashboard/css/app.min.css?v={{ $cssVersion }}" as="style" />
+    
     <!-- Bootstrap Css -->
     <link href="{{ $baseUrl }}/dashboard/css/bootstrap.min.css?v={{ $cssVersion }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
 
