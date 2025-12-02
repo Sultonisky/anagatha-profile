@@ -16,8 +16,10 @@ class AuthController extends Controller
         // If user is already authenticated, redirect based on role
         if (Auth::check()) {
             $user = Auth::user();
-            if (in_array($user->role, ['recruiter', 'admin'])) {
+            if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
+            } elseif ($user->role === 'recruiter') {
+                return redirect()->route('recruiter.dashboard');
             }
             return redirect()->route('home');
         }
@@ -41,9 +43,12 @@ class AuthController extends Controller
             $user = Auth::user();
 
             // Redirect based on user role
-            $redirectRoute = 'home';
-            if (in_array($user->role, ['recruiter', 'admin'])) {
+            if ($user->role === 'admin') {
                 $redirectRoute = 'admin.dashboard';
+            } elseif ($user->role === 'recruiter') {
+                $redirectRoute = 'recruiter.dashboard';
+            } else {
+                $redirectRoute = 'home';
             }
 
             return redirect()->intended(route($redirectRoute))

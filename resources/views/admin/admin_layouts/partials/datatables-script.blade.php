@@ -13,6 +13,11 @@ function initDataTables() {
         // Initialize all tables with data-datatable-config attribute
         $('table[data-datatable-config]').each(function() {
             var $table = $(this);
+
+            // Avoid "Cannot reinitialise DataTable" by skipping tables that are already initialized
+            if ( $.fn.DataTable.isDataTable( $table ) ) {
+                return;
+            }
             var configAttr = $table.attr('data-datatable-config');
             var config = {};
             

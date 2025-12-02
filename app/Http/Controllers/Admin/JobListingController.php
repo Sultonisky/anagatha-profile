@@ -17,18 +17,26 @@ class JobListingController extends Controller
      */
     public function index(Request $request)
     {
+        $user = $request->user();
+        $isRecruiter = $user && $user->role === 'recruiter';
+
         $showTrashed = $request->has('trashed') && $request->trashed == '1';
-        
+
         if ($showTrashed) {
-            $jobListings = JobListing::onlyTrashed()
+            $query = JobListing::onlyTrashed()
                 ->with('recruiter')
-                ->orderBy('deleted_at', 'desc')
-                ->get();
+                ->orderBy('deleted_at', 'desc');
         } else {
-            $jobListings = JobListing::with('recruiter')
-                ->orderBy('created_at', 'desc')
-                ->get();
+            $query = JobListing::with('recruiter')
+                ->orderBy('created_at', 'desc');
         }
+
+        // Recruiter only sees their own job listings
+        if ($isRecruiter) {
+            $query->where('recruiter_id', $user->id);
+        }
+
+        $jobListings = $query->get();
         
         return view('admin.job_listings.index', [
             'title' => 'Job Listings Management',
@@ -42,7 +50,15 @@ class JobListingController extends Controller
      */
     public function create()
     {
-        $recruiters = User::where('role', 'recruiter')->get();
+        $user = auth()->user();
+
+        if ($user && $user->role === 'recruiter') {
+            // Recruiter can only create jobs for themselves
+            $recruiters = User::where('id', $user->id)->get();
+        } else {
+            // Admin can assign any recruiter
+            $recruiters = User::where('role', 'recruiter')->get();
+        }
         
         return view('admin.job_listings.create', [
             'title' => 'Create New Job Listing',
@@ -55,6 +71,13 @@ class JobListingController extends Controller
      */
     public function store(Request $request)
     {
+        $user = $request->user();
+
+        // For recruiter, force recruiter_id to current user to prevent assigning jobs to others
+        if ($user && $user->role === 'recruiter') {
+            $request->merge(['recruiter_id' => $user->id]);
+        }
+
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'company' => 'required|string|max:255',
@@ -155,6 +178,8 @@ class JobListingController extends Controller
     public function show(string $id)
     {
         $jobListing = JobListing::with('recruiter')->findOrFail($id);
+
+        $this->ensureJobListingAccessible($jobListing);
         
         return view('admin.job_listings.show', [
             'title' => 'Job Listing Details',
@@ -168,7 +193,14 @@ class JobListingController extends Controller
     public function edit(string $id)
     {
         $jobListing = JobListing::findOrFail($id);
-        $recruiters = User::where('role', 'recruiter')->get();
+        $this->ensureJobListingAccessible($jobListing);
+
+        $user = auth()->user();
+        if ($user && $user->role === 'recruiter') {
+            $recruiters = User::where('id', $user->id)->get();
+        } else {
+            $recruiters = User::where('role', 'recruiter')->get();
+        }
         
         return view('admin.job_listings.edit', [
             'title' => 'Edit Job Listing',
@@ -183,6 +215,12 @@ class JobListingController extends Controller
     public function update(Request $request, string $id)
     {
         $jobListing = JobListing::findOrFail($id);
+        $this->ensureJobListingAccessible($jobListing);
+
+        $user = $request->user();
+        if ($user && $user->role === 'recruiter') {
+            $request->merge(['recruiter_id' => $user->id]);
+        }
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
@@ -302,6 +340,7 @@ class JobListingController extends Controller
     {
         try {
             $jobListing = JobListing::findOrFail($id);
+            $this->ensureJobListingAccessible($jobListing);
             // Note: Logo file is kept for soft delete, will be deleted on force delete
             $jobListing->delete();
 
@@ -318,10 +357,18 @@ class JobListingController extends Controller
      */
     public function trashed()
     {
-        $jobListings = JobListing::onlyTrashed()
+        $user = auth()->user();
+        $isRecruiter = $user && $user->role === 'recruiter';
+
+        $query = JobListing::onlyTrashed()
             ->with('recruiter')
-            ->orderBy('deleted_at', 'desc')
-            ->get();
+            ->orderBy('deleted_at', 'desc');
+
+        if ($isRecruiter) {
+            $query->where('recruiter_id', $user->id);
+        }
+
+        $jobListings = $query->get();
         
         return view('admin.job_listings.index', [
             'title' => 'Deleted Job Listings',
@@ -337,6 +384,7 @@ class JobListingController extends Controller
     {
         try {
             $jobListing = JobListing::onlyTrashed()->findOrFail($id);
+            $this->ensureJobListingAccessible($jobListing);
             $jobListing->restore();
 
             return redirect()->route('admin.job-listings.index', ['trashed' => '1'])
@@ -354,6 +402,7 @@ class JobListingController extends Controller
     {
         try {
             $jobListing = JobListing::onlyTrashed()->findOrFail($id);
+            $this->ensureJobListingAccessible($jobListing);
             
             // Delete company logo file
             if ($jobListing->company_logo && Storage::disk('local')->exists('company/' . $jobListing->company_logo)) {
@@ -377,20 +426,27 @@ class JobListingController extends Controller
     public function export(Request $request)
     {
         try {
+            $user = $request->user();
+            $isRecruiter = $user && $user->role === 'recruiter';
+
             $showTrashed = $request->has('trashed') && $request->trashed == '1';
             
             if ($showTrashed) {
-                $jobListings = JobListing::onlyTrashed()
+                $query = JobListing::onlyTrashed()
                     ->with('recruiter')
-                    ->orderBy('deleted_at', 'desc')
-                    ->get();
+                    ->orderBy('deleted_at', 'desc');
                 $filename = 'deleted_job_listings_' . date('Y-m-d_His') . '.csv';
             } else {
-                $jobListings = JobListing::with('recruiter')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+                $query = JobListing::with('recruiter')
+                    ->orderBy('created_at', 'desc');
                 $filename = 'job_listings_' . date('Y-m-d_His') . '.csv';
             }
+
+            if ($isRecruiter) {
+                $query->where('recruiter_id', $user->id);
+            }
+
+            $jobListings = $query->get();
 
             $headers = [
                 'Content-Type' => 'text/csv; charset=UTF-8',
@@ -453,6 +509,29 @@ class JobListingController extends Controller
             return redirect()->route('admin.job-listings.index')
                 ->with('error', 'Failed to export job listings. Please try again.');
         }
+    }
+
+    /**
+     * Ensure the current user (recruiter) can access this job listing,
+     * or is an admin. Abort with 403 otherwise.
+     */
+    protected function ensureJobListingAccessible(JobListing $jobListing): void
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            abort(403);
+        }
+
+        if ($user->role === 'admin') {
+            return;
+        }
+
+        if ($user->role === 'recruiter' && (int) $jobListing->recruiter_id === (int) $user->id) {
+            return;
+        }
+
+        abort(403);
     }
 
     /**

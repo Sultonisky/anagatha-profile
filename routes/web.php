@@ -118,26 +118,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->middleware('guest');
 });
 
-// Admin Routes (Protected)
+// Admin Routes (Protected - Admin only section)
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role.recruiter.admin'])->group(function () {
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     
-    // Dashboard
+    // Dashboard (accessible by both admin and recruiter, but URL is /admin/dashboard)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
-    // Users Resource Routes - Export must be before resource to avoid route conflict
-    Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
-    Route::resource('users', UserController::class);
-    
-    // Job Listings Resource Routes - Export must be before resource to avoid route conflict
+    // Job Listings Resource Routes - Admin can see all, recruiter sees only their own (handled in controller)
     Route::get('/job-listings/export', [JobListingController::class, 'export'])->name('job-listings.export');
     Route::get('/job-listings/trashed/list', [JobListingController::class, 'trashed'])->name('job-listings.trashed');
     Route::post('/job-listings/{id}/restore', [JobListingController::class, 'restore'])->name('job-listings.restore');
     Route::delete('/job-listings/{id}/force-delete', [JobListingController::class, 'forceDelete'])->name('job-listings.force-delete');
     Route::resource('job-listings', JobListingController::class);
     
-    // Job Apply Resource Routes - Export must be before resource to avoid route conflict
+    // Job Apply Resource Routes - Admin can see all, recruiter sees only their own (handled in controller)
     Route::get('/job-apply/export', [JobApplyController::class, 'export'])->name('job-apply.export');
     Route::get('/job-apply/trashed/list', [JobApplyController::class, 'trashed'])->name('job-apply.trashed');
     Route::post('/job-apply/{id}/restore', [JobApplyController::class, 'restore'])->name('job-apply.restore');
@@ -147,14 +143,43 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role.recruiter.admi
     // Job Apply File Downloads
     Route::get('/job-apply/{id}/download/cv', [JobApplyController::class, 'downloadCv'])->name('job-apply.download.cv');
     Route::get('/job-apply/{id}/download/portfolio', [JobApplyController::class, 'downloadPortfolio'])->name('job-apply.download.portfolio');
-    
-    // Users Resource Routes - restore and force delete
+});
+
+// Admin Only Routes (Protected - Admin exclusive access)
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role.admin'])->group(function () {
+    // Users Resource Routes - Admin only (recruiters cannot manage users)
+    Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
     Route::get('/users/trashed/list', [UserController::class, 'trashed'])->name('users.trashed');
     Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::delete('/users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
+    Route::resource('users', UserController::class);
     
-    // Recruiter Routes (Placeholder - replace with actual controller when available)
-    Route::get('/recruiter', function () {
-        return redirect()->route('admin.dashboard')->with('info', 'Recruiters page coming soon');
-    })->name('recruiter.index');
+    // (Add more admin-only routes here)
+});
+
+// Recruiter Routes (Protected - recruiter-facing URLs, accessible by recruiter and admin)
+Route::prefix('recruiter')->name('recruiter.')->middleware(['auth', 'role.recruiter.admin'])->group(function () {
+    // Logout (same controller, different route name/prefix)
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Dashboard (uses same controller, but URL is /recruiter/dashboard)
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Job Listings (recruiter-scoped in controller)
+    Route::get('/job-listings/export', [JobListingController::class, 'export'])->name('job-listings.export');
+    Route::get('/job-listings/trashed/list', [JobListingController::class, 'trashed'])->name('job-listings.trashed');
+    Route::post('/job-listings/{id}/restore', [JobListingController::class, 'restore'])->name('job-listings.restore');
+    Route::delete('/job-listings/{id}/force-delete', [JobListingController::class, 'forceDelete'])->name('job-listings.force-delete');
+    Route::resource('job-listings', JobListingController::class);
+
+    // Job Applications (only for this recruiter in controller)
+    Route::get('/job-apply/export', [JobApplyController::class, 'export'])->name('job-apply.export');
+    Route::get('/job-apply/trashed/list', [JobApplyController::class, 'trashed'])->name('job-apply.trashed');
+    Route::post('/job-apply/{id}/restore', [JobApplyController::class, 'restore'])->name('job-apply.restore');
+    Route::delete('/job-apply/{id}/force-delete', [JobApplyController::class, 'forceDelete'])->name('job-apply.force-delete');
+    Route::resource('job-apply', JobApplyController::class);
+
+    // Job Apply File Downloads
+    Route::get('/job-apply/{id}/download/cv', [JobApplyController::class, 'downloadCv'])->name('job-apply.download.cv');
+    Route::get('/job-apply/{id}/download/portfolio', [JobApplyController::class, 'downloadPortfolio'])->name('job-apply.download.portfolio');
 });

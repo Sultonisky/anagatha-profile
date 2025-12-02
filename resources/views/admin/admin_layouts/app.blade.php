@@ -126,8 +126,8 @@
 <script src="{{ $baseUrl }}/dashboard/libs/simplebar/simplebar.min.js"></script>
 <script src="{{ $baseUrl }}/dashboard/libs/node-waves/waves.min.js"></script>
 
-<!-- apexcharts -->
-<script src="{{ $baseUrl }}/dashboard/libs/apexcharts/apexcharts.min.js"></script>
+<!-- Chart.js v2 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 
 <!-- jquery.vectormap map -->
 <script src="{{ $baseUrl }}/dashboard/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js"></script>

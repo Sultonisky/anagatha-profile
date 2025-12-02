@@ -18,18 +18,28 @@ class JobApplyController extends Controller
      */
     public function index(Request $request)
     {
+        $user = $request->user();
+        $isRecruiter = $user && $user->role === 'recruiter';
+
         $showTrashed = $request->has('trashed') && $request->trashed == '1';
         
         if ($showTrashed) {
-            $jobApplies = JobApply::onlyTrashed()
+            $query = JobApply::onlyTrashed()
                 ->with(['user', 'jobListing'])
-                ->orderBy('deleted_at', 'desc')
-                ->get();
+                ->orderBy('deleted_at', 'desc');
         } else {
-            $jobApplies = JobApply::with(['user', 'jobListing'])
-                ->orderBy('created_at', 'desc')
-                ->get();
+            $query = JobApply::with(['user', 'jobListing'])
+                ->orderBy('created_at', 'desc');
         }
+
+        // Recruiter only sees applications to their own job listings
+        if ($isRecruiter) {
+            $query->whereHas('jobListing', function ($q) use ($user) {
+                $q->where('recruiter_id', $user->id);
+            });
+        }
+
+        $jobApplies = $query->get();
         
         return view('admin.job_apply.index', [
             'title' => 'Job Applications Management',
@@ -43,8 +53,19 @@ class JobApplyController extends Controller
      */
     public function create()
     {
+        $user = auth()->user();
+
         $users = User::orderBy('first_name')->get();
-        $jobListings = JobListing::where('status', 'active')->orderBy('title')->get();
+
+        if ($user && $user->role === 'recruiter') {
+            // Only active listings owned by this recruiter
+            $jobListings = JobListing::where('status', 'active')
+                ->where('recruiter_id', $user->id)
+                ->orderBy('title')
+                ->get();
+        } else {
+            $jobListings = JobListing::where('status', 'active')->orderBy('title')->get();
+        }
         
         return view('admin.job_apply.create', [
             'title' => 'Create New Job Application',
@@ -120,6 +141,7 @@ class JobApplyController extends Controller
     public function show(string $id)
     {
         $jobApply = JobApply::with(['user', 'jobListing'])->findOrFail($id);
+        $this->ensureJobApplyAccessible($jobApply);
         
         return view('admin.job_apply.show', [
             'title' => 'Job Application Details',
@@ -133,7 +155,18 @@ class JobApplyController extends Controller
     public function edit(string $id)
     {
         $jobApply = JobApply::with(['user', 'jobListing'])->findOrFail($id);
-        $jobListings = JobListing::where('status', 'active')->orderBy('title')->get();
+        $this->ensureJobApplyAccessible($jobApply);
+
+        $user = auth()->user();
+
+        if ($user && $user->role === 'recruiter') {
+            $jobListings = JobListing::where('status', 'active')
+                ->where('recruiter_id', $user->id)
+                ->orderBy('title')
+                ->get();
+        } else {
+            $jobListings = JobListing::where('status', 'active')->orderBy('title')->get();
+        }
         
         return view('admin.job_apply.edit', [
             'title' => 'Edit Job Application',
@@ -148,6 +181,7 @@ class JobApplyController extends Controller
     public function update(Request $request, string $id)
     {
         $jobApply = JobApply::findOrFail($id);
+        $this->ensureJobApplyAccessible($jobApply);
 
         $validator = Validator::make($request->all(), [
             'job_listing_id' => 'nullable|exists:job_listings,id',
@@ -226,6 +260,7 @@ class JobApplyController extends Controller
     {
         try {
             $jobApply = JobApply::findOrFail($id);
+            $this->ensureJobApplyAccessible($jobApply);
             
             // Delete associated files (check both local and public for backward compatibility)
             if ($jobApply->cv) {
@@ -260,6 +295,7 @@ class JobApplyController extends Controller
     public function downloadCv(string $id)
     {
         $jobApply = JobApply::findOrFail($id);
+        $this->ensureJobApplyAccessible($jobApply);
         
         if (!$jobApply->cv) {
             abort(404, 'CV file not found.');
@@ -288,6 +324,7 @@ class JobApplyController extends Controller
     public function downloadPortfolio(string $id)
     {
         $jobApply = JobApply::findOrFail($id);
+        $this->ensureJobApplyAccessible($jobApply);
         
         if (!$jobApply->portfolio_file) {
             abort(404, 'Portfolio file not found.');
@@ -315,10 +352,20 @@ class JobApplyController extends Controller
      */
     public function trashed()
     {
-        $jobApplies = JobApply::onlyTrashed()
+        $user = auth()->user();
+        $isRecruiter = $user && $user->role === 'recruiter';
+
+        $query = JobApply::onlyTrashed()
             ->with(['user', 'jobListing'])
-            ->orderBy('deleted_at', 'desc')
-            ->get();
+            ->orderBy('deleted_at', 'desc');
+
+        if ($isRecruiter) {
+            $query->whereHas('jobListing', function ($q) use ($user) {
+                $q->where('recruiter_id', $user->id);
+            });
+        }
+
+        $jobApplies = $query->get();
         
         return view('admin.job_apply.index', [
             'title' => 'Deleted Job Applications',
@@ -334,6 +381,7 @@ class JobApplyController extends Controller
     {
         try {
             $jobApply = JobApply::onlyTrashed()->findOrFail($id);
+            $this->ensureJobApplyAccessible($jobApply);
             $jobApply->restore();
 
             return redirect()->route('admin.job-apply.index', ['trashed' => '1'])
@@ -351,6 +399,7 @@ class JobApplyController extends Controller
     {
         try {
             $jobApply = JobApply::onlyTrashed()->findOrFail($id);
+            $this->ensureJobApplyAccessible($jobApply);
             
             // Delete associated files
             if ($jobApply->cv) {
@@ -385,20 +434,29 @@ class JobApplyController extends Controller
     public function export(Request $request)
     {
         try {
+            $user = $request->user();
+            $isRecruiter = $user && $user->role === 'recruiter';
+
             $showTrashed = $request->has('trashed') && $request->trashed == '1';
             
             if ($showTrashed) {
-                $jobApplies = JobApply::onlyTrashed()
+                $query = JobApply::onlyTrashed()
                     ->with(['user', 'jobListing'])
-                    ->orderBy('deleted_at', 'desc')
-                    ->get();
+                    ->orderBy('deleted_at', 'desc');
                 $filename = 'deleted_job_applications_' . date('Y-m-d_His') . '.csv';
             } else {
-                $jobApplies = JobApply::with(['user', 'jobListing'])
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+                $query = JobApply::with(['user', 'jobListing'])
+                    ->orderBy('created_at', 'desc');
                 $filename = 'job_applications_' . date('Y-m-d_His') . '.csv';
             }
+
+            if ($isRecruiter) {
+                $query->whereHas('jobListing', function ($q) use ($user) {
+                    $q->where('recruiter_id', $user->id);
+                });
+            }
+
+            $jobApplies = $query->get();
 
             $headers = [
                 'Content-Type' => 'text/csv; charset=UTF-8',
@@ -460,5 +518,31 @@ class JobApplyController extends Controller
             return redirect()->route('admin.job-apply.index')
                 ->with('error', 'Failed to export job applications. Please try again.');
         }
+    }
+
+    /**
+     * Ensure the current user (recruiter) can access this job application,
+     * or is an admin. Abort with 403 otherwise.
+     */
+    protected function ensureJobApplyAccessible(JobApply $jobApply): void
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            abort(403);
+        }
+
+        if ($user->role === 'admin') {
+            return;
+        }
+
+        if ($user->role === 'recruiter') {
+            $jobListing = $jobApply->jobListing;
+            if ($jobListing && (int) $jobListing->recruiter_id === (int) $user->id) {
+                return;
+            }
+        }
+
+        abort(403);
     }
 }

@@ -1,9 +1,16 @@
 @extends('admin.admin_layouts.app')
 
+@section('title', $title ?? 'Dashboard')
+
+@php
+    $isRecruiter = auth()->user()->role === 'recruiter';
+@endphp
 
 @section('content')
     <!-- Statistics Cards -->
     <div class="row">
+        @if(!$isRecruiter)
+        {{-- Admin: Total Users Card --}}
         <div class="col-xl-3 col-md-6">
             <div class="card">
                 <div class="card-body">
@@ -27,13 +34,41 @@
                 </div>
             </div>
         </div>
+        @else
+        {{-- Recruiter: Total Applicants Card --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <p class="text-truncate font-size-14 mb-2">Total Applicants</p>
+                            <h4 class="mb-2">{{ number_format($totalUsers ?? 0) }}</h4>
+                            <p class="text-muted mb-0">
+                                <span class="text-success fw-bold font-size-12 me-2">
+                                    <i class="ri-arrow-right-up-line me-1 align-middle"></i>
+                                    {{ $newUsersToday ?? 0 }} new today
+                                </span>
+                            </p>
+                        </div>
+                        <div class="avatar-sm">
+                            <span class="avatar-title bg-light text-primary rounded-3">
+                                <i class="ri-user-3-line font-size-24"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
 
         <div class="col-xl-3 col-md-6">
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex">
                         <div class="flex-grow-1">
-                            <p class="text-truncate font-size-14 mb-2">Job Listings</p>
+                            <p class="text-truncate font-size-14 mb-2">
+                                @if($isRecruiter) My Job Listings @else Job Listings @endif
+                            </p>
                             <h4 class="mb-2">{{ number_format($totalJobListings ?? 0) }}</h4>
                             <p class="text-muted mb-0">
                                 <span class="text-info fw-bold font-size-12 me-2">
@@ -57,12 +92,14 @@
                 <div class="card-body">
                     <div class="d-flex">
                         <div class="flex-grow-1">
-                            <p class="text-truncate font-size-14 mb-2">Job Applications</p>
+                            <p class="text-truncate font-size-14 mb-2">
+                                @if($isRecruiter) My Job Applications @else Job Applications @endif
+                            </p>
                             <h4 class="mb-2">{{ number_format($totalJobApplications ?? 0) }}</h4>
                             <p class="text-muted mb-0">
                                 <span class="text-warning fw-bold font-size-12 me-2">
                                     <i class="ri-file-paper-line me-1 align-middle"></i>
-                                    Pending review
+                                    @if($isRecruiter) Pending review @else Pending review @endif
                                 </span>
                             </p>
                         </div>
@@ -76,6 +113,8 @@
             </div>
         </div>
 
+        @if(!$isRecruiter)
+        {{-- Admin: Recruiters Card --}}
         <div class="col-xl-3 col-md-6">
             <div class="card">
                 <div class="card-body">
@@ -99,117 +138,154 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
     <!-- end row -->
 
-    <!-- Charts Row -->
+    <!-- Chart dan Quick Stats -->
     <div class="row">
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-body pb-0">
-                    <div class="float-end d-none d-md-inline-block">
-                        <div class="dropdown card-header-dropdown">
-                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                                <span class="text-muted">Report<i class="mdi mdi-chevron-down ms-1"></i></span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Export</a>
-                                <a class="dropdown-item" href="#">Import</a>
-                                <a class="dropdown-item" href="#">Download Report</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 class="card-title mb-4">User Growth</h4>
-
-                    <div class="text-center pt-3">
-                        <div class="row">
-                            <div class="col-sm-4 mb-3 mb-sm-0">
-                                <div class="d-inline-flex">
-                                    <h5 class="me-2">{{ number_format($totalUsers ?? 0) }}</h5>
-                                    <div class="text-success font-size-12">
-                                        <i class="mdi mdi-menu-up font-size-14"></i>
-                                        Total
-                                    </div>
-                                </div>
-                                <p class="text-muted text-truncate mb-0">Users</p>
-                            </div>
-                            <div class="col-sm-4 mb-3 mb-sm-0">
-                                <div class="d-inline-flex">
-                                    <h5 class="me-2">{{ number_format($verifiedUsers ?? 0) }}</h5>
-                                    <div class="text-success font-size-12">
-                                        <i class="mdi mdi-menu-up font-size-14"></i>
-                                        Verified
-                                    </div>
-                                </div>
-                                <p class="text-muted text-truncate mb-0">Verified</p>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="d-inline-flex">
-                                    <h5 class="me-2">{{ number_format($unverifiedUsers ?? 0) }}</h5>
-                                    <div class="text-warning font-size-12">
-                                        <i class="mdi mdi-menu-down font-size-14"></i>
-                                        Unverified
-                                    </div>
-                                </div>
-                                <p class="text-muted text-truncate mb-0">Unverified</p>
-                            </div>
-                        </div>
-                    </div>
+        @if(!$isRecruiter)
+        {{-- Admin: User Growth Chart --}}
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">User Growth (6 Month Ago)</h6>
                 </div>
-                <div class="card-body py-0 px-2">
-                    <div id="area_chart" class="apex-charts" dir="ltr"></div>
+                <div class="card-body">
+                    @if(isset($userGrowthSeries) && count($userGrowthSeries) > 0)
+                        <div class="chart-area" style="position: relative; height: 300px;">
+                            <canvas id="userGrowthChart"></canvas>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <i class="ri-line-chart-line" style="font-size: 3rem; color: #d3d3d3;"></i>
+                            <p class="text-muted mt-3">Belum ada data user untuk ditampilkan</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-body pb-0">
-                    <div class="float-end d-none d-md-inline-block">
-                        <div class="dropdown">
-                            <a class="text-reset" href="#" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                                <span class="text-muted">This Year<i class="mdi mdi-chevron-down ms-1"></i></span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Today</a>
-                                <a class="dropdown-item" href="#">Last Week</a>
-                                <a class="dropdown-item" href="#">Last Month</a>
-                                <a class="dropdown-item" href="#">This Year</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 class="card-title mb-4">Job Listings Growth</h4>
-
-                    <div class="text-center pt-3">
-                        <div class="row">
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <div>
-                                    <h5>{{ number_format($totalJobListings ?? 0) }}</h5>
-                                    <p class="text-muted text-truncate mb-0">Total Listings</p>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div>
-                                    <h5>{{ number_format($activeJobListings ?? 0) }}</h5>
-                                    <p class="text-muted text-truncate mb-0">Active Listings</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        {{-- Admin: Quick Stats --}}
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Quick Stats</h6>
                 </div>
-                <div class="card-body py-0 px-2">
-                    <div id="column_line_chart" class="apex-charts" dir="ltr"></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Verified Users</span>
+                            <span class="font-weight-bold">
+                                {{ $totalUsers > 0 ? number_format(($verifiedUsers / $totalUsers) * 100, 1) : 0 }}%
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" role="progressbar" 
+                                style="width: {{ $totalUsers > 0 ? ($verifiedUsers / $totalUsers) * 100 : 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Active Job Listings</span>
+                            <span class="font-weight-bold">
+                                {{ $totalJobListings > 0 ? number_format(($activeJobListings / $totalJobListings) * 100, 1) : 0 }}%
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                style="width: {{ $totalJobListings > 0 ? ($activeJobListings / $totalJobListings) * 100 : 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">New Users Today</span>
+                            <span class="font-weight-bold">
+                                {{ number_format($newUsersToday ?? 0) }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        @endif
+
+        {{-- Job Listings Growth Chart --}}
+        <div class="{{ $isRecruiter ? 'col-xl-8 col-lg-7' : 'col-xl-12' }}">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        @if($isRecruiter) My Job Listings Growth (6 Month Ago) @else Job Listings Growth (6 Month Ago) @endif
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if(isset($jobListingsGrowthSeries) && count($jobListingsGrowthSeries) > 0)
+                        <div class="chart-area" style="position: relative; height: 300px;">
+                            <canvas id="jobListingsGrowthChart"></canvas>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <i class="ri-line-chart-line" style="font-size: 3rem; color: #d3d3d3;"></i>
+                            <p class="text-muted mt-3">Belum ada data job listings untuk ditampilkan</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        @if($isRecruiter)
+        {{-- Recruiter: Quick Stats --}}
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Quick Stats</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Active Listings</span>
+                            <span class="font-weight-bold">
+                                {{ $totalJobListings > 0 ? number_format(($activeJobListings / $totalJobListings) * 100, 1) : 0 }}%
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                style="width: {{ $totalJobListings > 0 ? ($activeJobListings / $totalJobListings) * 100 : 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Total Applicants</span>
+                            <span class="font-weight-bold">
+                                {{ number_format($totalJobApplications ?? 0) }}
+                            </span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">New Applications Today</span>
+                            <span class="font-weight-bold">
+                                {{ number_format($newUsersToday ?? 0) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
     <!-- end row -->
 
     <!-- Recent Activity Row -->
     <div class="row">
-        <div class="col-xl-8">
+        <div class="{{ $isRecruiter ? 'col-xl-12' : 'col-xl-8' }}">
             <div class="card">
                 <div class="card-body">
                     <div class="dropdown float-end">
@@ -224,7 +300,9 @@
                         </div>
                     </div>
 
-                    <h4 class="card-title mb-4">Recent Users</h4>
+                    <h4 class="card-title mb-4">
+                        @if($isRecruiter) Recent Applicants @else Recent Users @endif
+                    </h4>
 
                     <div class="table-responsive">
                         <table class="table table-centered mb-0 align-middle table-hover table-nowrap">
@@ -264,15 +342,24 @@
                                         </td>
                                         <td>{{ $user->created_at->setTimezone('Asia/Jakarta')->format('d M, Y') }}</td>
                                         <td>
-                                            <a href="{{ route('admin.users.show', $user->id) }}"
-                                                class="btn btn-sm btn-primary">
-                                                <i class="ri-eye-line"></i>
-                                            </a>
+                                            @if($isRecruiter)
+                                                <a href="{{ route('recruiter.job-apply.index', ['user_id' => $user->id]) }}"
+                                                    class="btn btn-sm btn-primary" title="View Applications">
+                                                    <i class="ri-eye-line"></i>
+                                                </a>
+                                            @else
+                                                <a href="{{ route('admin.users.show', $user->id) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="ri-eye-line"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center">No users found</td>
+                                        <td colspan="6" class="text-center">
+                                            @if($isRecruiter) No applicants found @else No users found @endif
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -282,192 +369,86 @@
             </div>
         </div>
 
-        <div class="col-xl-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="float-end">
-                        <select class="form-select shadow-none form-select-sm" id="month-select">
-                            <option value="current" selected>{{ now()->setTimezone('Asia/Jakarta')->format('M') }}</option>
-                            <option value="last">Last Month</option>
-                        </select>
-                    </div>
-                    <h4 class="card-title mb-4">User Distribution</h4>
-
-                    <div class="row">
-                        <div class="col-4">
-                            <div class="text-center mt-4">
-                                <h5>{{ number_format($adminCount ?? 0) }}</h5>
-                                <p class="mb-2 text-truncate">Admins</p>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="text-center mt-4">
-                                <h5>{{ number_format($userCount ?? 0) }}</h5>
-                                <p class="mb-2 text-truncate">Users</p>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="text-center mt-4">
-                                <h5>{{ number_format($recruiterCount ?? 0) }}</h5>
-                                <p class="mb-2 text-truncate">Recruiters</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4">
-                        <div id="donut-chart" class="apex-charts"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <!-- end row -->
 @endsection
 
 @push('scripts')
-    <script>
-        // Wait for jQuery and ApexCharts to be loaded
-        function initDashboardCharts() {
-            // Check if required libraries are loaded
-            if (typeof jQuery === 'undefined' || typeof ApexCharts === 'undefined') {
-                // Retry after a short delay
-                setTimeout(initDashboardCharts, 100);
-                return;
+@if(isset($userGrowthSeries) && count($userGrowthSeries) > 0)
+<script>
+    // Chart User Growth (Chart.js v2 syntax) - Admin only
+    var ctxUserGrowth = document.getElementById("userGrowthChart");
+    if (ctxUserGrowth) {
+        var userGrowthChart = new Chart(ctxUserGrowth, {
+            type: 'line',
+            data: {
+                labels: @json($userGrowthCategories ?? []),
+                datasets: [{
+                    label: 'Jumlah User',
+                    data: @json($userGrowthSeries ?? []),
+                    borderColor: 'rgb(30, 136, 229)',
+                    backgroundColor: 'rgba(30, 136, 229, 0.1)',
+                    lineTension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 1
+                        }
+                    }]
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
             }
+        });
+    }
+</script>
+@endif
 
-            // Use jQuery's document ready to ensure DOM is loaded
-            jQuery(document).ready(function($) {
-                // Area Chart - User Growth Over Time
-                var areaChartOptions = {
-                    series: [{
-                        name: 'New Users',
-                        data: @json($userGrowthSeries ?? [])
-                    }],
-                    chart: {
-                        type: 'area',
-                        height: 350,
-                        toolbar: {
-                            show: false
+@if(isset($jobListingsGrowthSeries) && count($jobListingsGrowthSeries) > 0)
+<script>
+    // Chart Job Listings Growth (Chart.js v2 syntax)
+    var ctxJobListings = document.getElementById("jobListingsGrowthChart");
+    if (ctxJobListings) {
+        var jobListingsChart = new Chart(ctxJobListings, {
+            type: 'line',
+            data: {
+                labels: @json($jobListingsGrowthCategories ?? []),
+                datasets: [{
+                    label: @if($isRecruiter) 'My Job Listings' @else 'Job Listings' @endif,
+                    data: @json($jobListingsGrowthSeries ?? []),
+                    borderColor: 'rgb(52, 195, 143)',
+                    backgroundColor: 'rgba(52, 195, 143, 0.1)',
+                    lineTension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 1
                         }
-                    },
-                    colors: ['#556ee6'],
-                    dataLabels: {
-                        enabled: false
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 2
-                    },
-                    fill: {
-                        type: 'gradient',
-                        gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.4,
-                            opacityTo: 0.1,
-                            stops: [0, 100]
-                        }
-                    },
-                    xaxis: {
-                        categories: @json($userGrowthCategories ?? [])
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: function(val) {
-                                return val + " users"
-                            }
-                        }
-                    },
-                    markers: {
-                        size: 4,
-                        hover: {
-                            size: 6
-                        }
-                    }
-                };
-
-                var areaChart = new ApexCharts(document.querySelector("#area_chart"), areaChartOptions);
-                areaChart.render();
-
-                // Column Line Chart - Job Listings Growth
-                var columnLineChartOptions = {
-                    series: [{
-                        name: 'Job Listings',
-                        type: 'column',
-                        data: @json($jobListingsGrowthSeries ?? [])
-                    }],
-                    chart: {
-                        height: 350,
-                        type: 'line',
-                        toolbar: {
-                            show: false
-                        }
-                    },
-                    stroke: {
-                        width: [0, 4]
-                    },
-                    colors: ['#34c38f'],
-                    dataLabels: {
-                        enabled: true,
-                        enabledOnSeries: [0]
-                    },
-                    xaxis: {
-                        categories: @json($jobListingsGrowthCategories ?? []),
-                        type: 'category'
-                    },
-                    yaxis: [{
-                        title: {
-                            text: 'Count',
-                        }
-                    }],
-                    tooltip: {
-                        y: {
-                            formatter: function(val) {
-                                return val + " listings"
-                            }
-                        }
-                    },
-                    markers: {
-                        size: 4,
-                        hover: {
-                            size: 6
-                        }
-                    }
-                };
-
-                var columnLineChart = new ApexCharts(document.querySelector("#column_line_chart"), columnLineChartOptions);
-                columnLineChart.render();
-
-                // Donut Chart
-                var donutChartOptions = {
-                    series: [{{ $adminCount ?? 0 }}, {{ $userCount ?? 0 }}, {{ $recruiterCount ?? 0 }}],
-                    chart: {
-                        type: 'donut',
-                        height: 300
-                    },
-                    labels: ['Admins', 'Users', 'Recruiters'],
-                    colors: ['#f46a6a', '#556ee6', '#34c38f'],
-                    legend: {
-                        show: true,
-                        position: 'bottom'
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        formatter: function(val) {
-                            return val.toFixed(1) + "%"
-                        }
-                    }
-                };
-
-                var donutChart = new ApexCharts(document.querySelector("#donut-chart"), donutChartOptions);
-                donutChart.render();
-            });
-        }
-
-        // Start initialization
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initDashboardCharts);
-        } else {
-            initDashboardCharts();
-        }
-    </script>
+                    }]
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        });
+    }
+</script>
+@endif
 @endpush

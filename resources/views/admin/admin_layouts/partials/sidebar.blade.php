@@ -27,34 +27,58 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title">Menu</li>
+                @php
+                    $role = auth()->user()->role ?? 'user';
+                @endphp
 
                 <li>
-                    <a href="{{ route('admin.dashboard') ?? 'index.html' }}" class="waves-effect">
-                        <i class="ri-dashboard-line"></i>
-                        <span>Dashboard</span>
-                    </a>
+                    @if ($role === 'recruiter')
+                        <a href="{{ route('recruiter.dashboard') }}" class="waves-effect">
+                            <i class="ri-dashboard-line"></i>
+                            <span>Recruiter Dashboard</span>
+                        </a>
+                    @else
+                        <a href="{{ route('admin.dashboard') ?? 'index.html' }}" class="waves-effect">
+                            <i class="ri-dashboard-line"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    @endif
                 </li>
 
-                <li>
-                    <a href="{{ route('admin.users.index') }}" class="waves-effect">
-                        <i class="ri-user-line"></i>
-                        <span>Users</span>
-                    </a>
-                </li>
+                @if ($role === 'admin')
+                    <li>
+                        <a href="{{ route('admin.users.index') }}" class="waves-effect">
+                            <i class="ri-user-line"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
 
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="ri-layout-3-line"></i>
-                        <span>Jobs</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="true">
-                        <li>
-                            <a href="{{ route('admin.job-listings.index') }}">Job Listings</a>
-                            <a href="{{ route('admin.job-apply.index') }}">Job Apply</a>
-                        </li>
-                    </ul>
-                </li>
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-layout-3-line"></i>
+                            <span>Jobs</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li>
+                                <a href="{{ route('admin.job-listings.index') }}">Job Listings</a>
+                                <a href="{{ route('admin.job-apply.index') }}">Job Apply</a>
+                            </li>
+                        </ul>
+                    </li>
+                @elseif ($role === 'recruiter')
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-layout-3-line"></i>
+                            <span>My Jobs</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li>
+                                <a href="{{ route('recruiter.job-listings.index') }}">My Job Listings</a>
+                                <a href="{{ route('recruiter.job-apply.index') }}">Job Applications</a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
             </ul>
         </div>
         <!-- Sidebar -->
