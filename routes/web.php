@@ -18,6 +18,29 @@ Route::get('/health', function () {
     return response()->json(['status' => 'ok', 'timestamp' => now()], 200);
 });
 
+// Ensure dashboard assets are accessible (fallback for static files)
+// This helps ensure CSS and JS files from dashboard directory can be served
+Route::get('/dashboard/{path}', function ($path) {
+    $filePath = public_path('dashboard/' . $path);
+    if (file_exists($filePath) && is_file($filePath)) {
+        $response = response()->file($filePath);
+        
+        // Set proper content type for CSS and JS files
+        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+        if ($extension === 'css') {
+            $response->header('Content-Type', 'text/css');
+        } elseif ($extension === 'js') {
+            $response->header('Content-Type', 'application/javascript');
+        }
+        
+        // Set cache headers
+        $response->header('Cache-Control', 'public, max-age=31536000');
+        
+        return $response;
+    }
+    abort(404);
+})->where('path', '.*')->name('dashboard.asset');
+
 Route::get('/lang/{locale}', function ($locale) {
     $availableLocales = config('app.supported_locales', []);
 
@@ -33,7 +56,7 @@ Route::get('/lang/{locale}', function ($locale) {
 // Public Pages
 Route::controller(PageController::class)->group(function () {
     Route::get('/', 'landing')->name('landing');
-    Route::get('/home', 'home')->name('home');
+    Route::get('/home', 'home')->middleware(['auth', 'role.user'])->name('home');
     Route::get('/about', 'about')->name('about');
     Route::get('/services', 'services')->name('services');
     Route::get('/why-us', 'whyUs')->name('why-us');
@@ -74,6 +97,7 @@ Route::post('/contact', [ContactController::class, 'store'])
 Route::controller(AuthController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('login');
     Route::post('/login', 'login');
+    Route::get('/register/role', 'showRegisterRoleForm')->name('register.role');
     Route::get('/register', 'showRegisterForm')->name('register');
     Route::post('/register', 'register');
     Route::get('/forgot-password', 'showForgotPasswordForm')->name('password.request');
@@ -95,7 +119,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 // Admin Routes (Protected)
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role.recruiter.admin'])->group(function () {
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     

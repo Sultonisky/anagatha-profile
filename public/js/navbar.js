@@ -90,6 +90,11 @@
                         dropdown.setAttribute('aria-expanded', 'false');
                     }
                 });
+                
+                // Prevent closing mobile menu when toggling dropdown
+                if (navLinks && navLinks.classList.contains('is-open')) {
+                    event.stopPropagation();
+                }
             };
 
             const closeDropdown = () => {
@@ -115,8 +120,13 @@
 
             // Close dropdown when clicking on a dropdown item
             dropdownMenu.addEventListener('click', (event) => {
-                if (event.target.closest('.nav-links__dropdown-item')) {
-                    closeDropdown();
+                const clickedItem = event.target.closest('.nav-links__dropdown-item');
+                if (clickedItem) {
+                    // Don't prevent default - allow navigation
+                    // Close dropdown after a short delay to allow navigation
+                    setTimeout(() => {
+                        closeDropdown();
+                    }, 100);
                 }
             });
         };
@@ -142,18 +152,19 @@
                 event.stopPropagation();
                 const isExpanded = dropdownTrigger.getAttribute('aria-expanded') === 'true';
                 
+                // Close nav menu if open
+                if (navLinks && navLinks.classList.contains('is-open')) {
+                    navLinks.classList.remove('is-open');
+                    if (navToggle) {
+                        navToggle.setAttribute('aria-expanded', 'false');
+                        navToggle.classList.remove('is-active');
+                    }
+                    document.body.classList.remove('nav-open');
+                }
+                
                 // Toggle main dropdown
                 dropdownTrigger.setAttribute('aria-expanded', !isExpanded);
                 userDropdown.classList.toggle('is-open', !isExpanded);
-                
-                // On mobile, also toggle nav menu when opening dropdown
-                if (!isExpanded && window.innerWidth <= 768 && navLinks) {
-                    navLinks.classList.add('is-open');
-                    document.body.classList.add('nav-open');
-                } else if (isExpanded && window.innerWidth <= 768 && navLinks) {
-                    navLinks.classList.remove('is-open');
-                    document.body.classList.remove('nav-open');
-                }
             };
 
             const closeDropdown = () => {
@@ -161,11 +172,6 @@
                 userDropdown.classList.remove('is-open');
                 if (languageSubmenu) {
                     languageSubmenu.classList.remove('is-open');
-                }
-                // Close nav menu on mobile when closing dropdown
-                if (window.innerWidth <= 768 && navLinks) {
-                    navLinks.classList.remove('is-open');
-                    document.body.classList.remove('nav-open');
                 }
             };
 
@@ -213,12 +219,19 @@
 
         initUserDropdown();
 
-        // Mobile menu toggle (only when user is not authenticated)
-        if (!isAuthenticated && navToggle && navLinks) {
+        // Mobile menu toggle (only when nav toggle button exists)
+        if (navToggle && navLinks) {
             const closeMenu = () => {
                 if (!navLinks.classList.contains('is-open')) {
                     return;
                 }
+                
+                // Close Services dropdown immediately if open (before closing nav menu)
+                const navDropdown = document.querySelector('[data-nav-dropdown]');
+                if (navDropdown && navDropdown.getAttribute('aria-expanded') === 'true') {
+                    navDropdown.setAttribute('aria-expanded', 'false');
+                }
+                
                 navLinks.classList.remove('is-open');
                 navToggle.setAttribute('aria-expanded', 'false');
                 navToggle.classList.remove('is-active');
@@ -233,6 +246,28 @@
 
             navToggle.addEventListener('click', () => {
                 const isOpen = navLinks.classList.toggle('is-open');
+                
+                // Close user dropdown if open
+                if (userDropdown && userDropdown.classList.contains('is-open')) {
+                    const dropdownTrigger = userDropdown.querySelector('[data-user-dropdown-toggle]');
+                    if (dropdownTrigger) {
+                        dropdownTrigger.setAttribute('aria-expanded', 'false');
+                    }
+                    userDropdown.classList.remove('is-open');
+                    const languageSubmenu = userDropdown.querySelector('[data-language-submenu]');
+                    if (languageSubmenu) {
+                        languageSubmenu.classList.remove('is-open');
+                    }
+                }
+                
+                // Close Services dropdown if closing nav menu
+                if (!isOpen) {
+                    const navDropdown = document.querySelector('[data-nav-dropdown]');
+                    if (navDropdown && navDropdown.getAttribute('aria-expanded') === 'true') {
+                        navDropdown.setAttribute('aria-expanded', 'false');
+                    }
+                }
+                
                 navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
                 navToggle.classList.toggle('is-active', isOpen);
                 document.body.classList.toggle('nav-open', isOpen);
@@ -270,4 +305,3 @@
         initNavbar();
     }
 })();
-

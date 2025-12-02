@@ -3,6 +3,9 @@
 
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>@yield('title', 'Dashboard') | Anagata Executive Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
@@ -10,28 +13,67 @@
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/hero-sec.png') }}" />
 
-    <!-- Bootstrap Css -->
-    <link href="{{ asset('dashboard/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    @php
+        // Use app version if available, otherwise use a timestamp for cache busting
+        $cssVersion = config('app.version', '1.0.0');
+        if (app()->environment('local')) {
+            $cssVersion = $cssVersion . '.' . time();
+        }
+        // Ensure absolute URL for CSS files
+        $baseUrl = url('/');
+    @endphp
+
+    <!-- Bootstrap Css - Load first as it's the foundation -->
+    <link href="{{ $baseUrl }}/dashboard/css/bootstrap.min.css?v={{ $cssVersion }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
 
     <!-- DataTables -->
-    <link href="{{ asset('dashboard/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet"
+    <link href="{{ $baseUrl }}/dashboard/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css?v={{ $cssVersion }}" rel="stylesheet"
         type="text/css" />
 
         <!-- Datatables Buttons CSS -->
-<link href="{{ asset('dashboard/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css?v={{ $cssVersion }}" rel="stylesheet">
 
 
     <!-- Responsive datatable examples -->
-    <link href="{{ asset('dashboard/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}"
+    <link href="{{ $baseUrl }}/dashboard/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css?v={{ $cssVersion }}"
         rel="stylesheet" type="text/css" />
     <!-- Icons Css -->
-    <link href="{{ asset('dashboard/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ $baseUrl }}/dashboard/css/icons.min.css?v={{ $cssVersion }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
-    <link href="{{ asset('dashboard/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    <link href="{{ $baseUrl }}/dashboard/css/app.min.css?v={{ $cssVersion }}" id="app-style" rel="stylesheet" type="text/css" />
     <!-- Admin Custom Color Override -->
-    <link href="{{ asset('dashboard/css/admin-custom.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ $baseUrl }}/dashboard/css/admin-custom.css?v={{ $cssVersion }}" rel="stylesheet" type="text/css" />
 
     @stack('styles')
+    
+    <!-- Ensure CSS is loaded -->
+    <script>
+        // Check if critical CSS files are loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            var bootstrapLink = document.getElementById('bootstrap-style');
+            var appLink = document.getElementById('app-style');
+            
+            if (bootstrapLink && !bootstrapLink.sheet) {
+                console.warn('Bootstrap CSS not loaded, attempting to reload...');
+                var newLink = document.createElement('link');
+                newLink.id = 'bootstrap-style';
+                newLink.rel = 'stylesheet';
+                newLink.type = 'text/css';
+                newLink.href = '{{ $baseUrl }}/dashboard/css/bootstrap.min.css?v={{ $cssVersion }}';
+                document.head.appendChild(newLink);
+            }
+            
+            if (appLink && !appLink.sheet) {
+                console.warn('App CSS not loaded, attempting to reload...');
+                var newLink = document.createElement('link');
+                newLink.id = 'app-style';
+                newLink.rel = 'stylesheet';
+                newLink.type = 'text/css';
+                newLink.href = '{{ $baseUrl }}/dashboard/css/app.min.css?v={{ $cssVersion }}';
+                document.head.appendChild(newLink);
+            }
+        });
+    </script>
 </head>
 
 
@@ -78,45 +120,45 @@
     <!-- END layout-wrapper -->
 
     <!-- JAVASCRIPT -->
-<script src="{{ asset('dashboard/libs/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/metismenu/metisMenu.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/simplebar/simplebar.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/node-waves/waves.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/jquery/jquery.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/metismenu/metisMenu.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/simplebar/simplebar.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/node-waves/waves.min.js"></script>
 
 <!-- apexcharts -->
-<script src="{{ asset('dashboard/libs/apexcharts/apexcharts.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/apexcharts/apexcharts.min.js"></script>
 
 <!-- jquery.vectormap map -->
-<script src="{{ asset('dashboard/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-us-merc-en.js') }}">
+<script src="{{ $baseUrl }}/dashboard/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-us-merc-en.js">
 </script>
 
 <!-- Required datatable js -->
-<script src="{{ asset('dashboard/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 
 <!-- Responsive examples -->
-<script src="{{ asset('dashboard/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
-<script src="{{ asset('dashboard/js/pages/dashboard.init.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/js/pages/dashboard.init.js"></script>
 
 <!-- Datatables Buttons JS -->
-<script src="{{ asset('dashboard/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/jszip/jszip.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/pdfmake/build/pdfmake.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/pdfmake/build/vfs_fonts.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
-<script src="{{ asset('dashboard/libs/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/jszip/jszip.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/pdfmake/build/pdfmake.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/pdfmake/build/vfs_fonts.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="{{ $baseUrl }}/dashboard/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 
 <!-- Datatable init js -->
-<script src="{{ asset('dashboard/js/pages/datatables.init.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/js/pages/datatables.init.js"></script>
 
 <!-- App js -->
-<script src="{{ asset('dashboard/js/app.js') }}"></script>
+<script src="{{ $baseUrl }}/dashboard/js/app.js"></script>
 
 <!-- Include reusable DataTables script -->
 @include('admin.admin_layouts.partials.datatables-script')

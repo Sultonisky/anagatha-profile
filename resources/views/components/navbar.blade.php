@@ -7,7 +7,7 @@
 
 <header class="site-header" role="banner">
     <div class="container nav">
-        <a href="{{ route('landing') }}" class="logo">
+        <a href="{{ $isAuthenticated ? route('home') : route('landing') }}" class="logo">
             <span>Anagata Executive</span>
             <span>Where Data Meet Talent</span>
         </a>
@@ -61,8 +61,8 @@
                         aria-haspopup="true"
                         data-user-dropdown-toggle>
                         <div class="user-dropdown__avatar">
-                            @if($user && $user->avatar)
-                                <img src="{{ route('profile.avatar', $user->avatar) }}" alt="{{ $user->name ?? 'User' }}" />
+                            @if($user->avatar ?? null)
+                                <img src="{{ route('profile.avatar', $user->avatar) }}" alt="{{ $user->name }}" />
                             @else
                                 @php
                                     $firstInitial = $user && $user->first_name ? strtoupper(substr($user->first_name, 0, 1)) : '';
@@ -84,7 +84,6 @@
                             <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
                             <span>History</span>
                         </a>
-
                         {{-- Language Submenu --}}
                         <div class="user-dropdown__submenu" data-language-submenu>
                             <button type="button" class="user-dropdown__item user-dropdown__item--submenu" role="menuitem">
@@ -109,7 +108,6 @@
                                 </button>
                             </div>
                         </div>
-
                         <form method="POST" action="{{ route('logout') }}" class="user-dropdown__logout-form">
                             @csrf
                             <button type="submit" class="user-dropdown__item user-dropdown__item--logout" role="menuitem">
@@ -119,6 +117,16 @@
                         </form>
                     </div>
                 </div>
+
+                @unless($isLandingPage)
+                    {{-- Mobile Menu Toggle --}}
+                    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation"
+                        data-nav-toggle>
+                        <span class="sr-only">Toggle navigation</span>
+                        <i class="nav-toggle__icon nav-toggle__icon--menu fa-solid fa-bars" aria-hidden="true"></i>
+                        <i class="nav-toggle__icon nav-toggle__icon--close fa-solid fa-x" aria-hidden="true"></i>
+                    </button>
+                @endunless
             @else
                 @if($isLandingPage)
                     {{-- Language Switcher (only on landing page) --}}
@@ -139,7 +147,7 @@
                         <a href="{{ route('login') }}" class="btn-login">
                             <span>Login</span>
                         </a>
-                        <a href="{{ route('register') }}" class="btn-register">
+                        <a href="{{ route('register.role') }}" class="btn-register">
                             <span>Register</span>
                         </a>
                     </div>
@@ -149,7 +157,11 @@
                         <a href="{{ route('login') }}" class="btn-login">
                             <span>Login</span>
                         </a>
+<<<<<<< HEAD
                         <a href="{{ route('register') }}" class="btn-register">
+=======
+                        <a href="{{ route('register.role') }}" class="btn-register">
+>>>>>>> b0c2dd0d5dc442ee570f13583879f908bee69865
                             <span>Register</span>
                         </a>
                     </div>

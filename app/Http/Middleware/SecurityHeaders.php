@@ -30,19 +30,40 @@ class SecurityHeaders
         // Forces browsers to use HTTPS for future connections
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
+        // Check if this is an admin route - use more permissive CSP for admin dashboard
+        $isAdminRoute = $request->is('admin/*');
+        
         // Content-Security-Policy (CSP) with nonce for inline scripts
         // Prevents XSS attacks by controlling which resources can be loaded
         // Using nonce instead of 'unsafe-inline' for better security
         // Removed 'unsafe-eval' as it's not needed and dangerous
-        $csp = "default-src 'self'; " .
-               "script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; " .
-               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; " .
-               "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; " .
-               "img-src 'self' data: https: blob:; " .
-               "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com; " .
-               "frame-ancestors 'self'; " .
-               "base-uri 'self'; " .
-               "form-action 'self' http://127.0.0.1:* https://127.0.0.1:* http://localhost:* https://localhost:*;";
+        if ($isAdminRoute) {
+            // Very permissive CSP for admin dashboard to allow all dashboard assets
+            // This ensures CSS and JS from dashboard directory can load properly
+            $csp = "default-src 'self' https: data: blob:; " .
+                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; " .
+                   "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; " .
+                   "style-src 'self' 'unsafe-inline' https: data: blob:; " .
+                   "style-src-elem 'self' 'unsafe-inline' https: data: blob:; " .
+                   "font-src 'self' https: data: blob:; " .
+                   "img-src 'self' data: https: blob:; " .
+                   "connect-src 'self' https:; " .
+                   "frame-ancestors 'self'; " .
+                   "base-uri 'self'; " .
+                   "form-action 'self' http://127.0.0.1:* https://127.0.0.1:* http://localhost:* https://localhost:*;";
+        } else {
+            // Standard CSP for regular pages
+            $csp = "default-src 'self'; " .
+                   "script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; " .
+                   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; " .
+                   "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; " .
+                   "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; " .
+                   "img-src 'self' data: https: blob:; " .
+                   "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com; " .
+                   "frame-ancestors 'self'; " .
+                   "base-uri 'self'; " .
+                   "form-action 'self' http://127.0.0.1:* https://127.0.0.1:* http://localhost:* https://localhost:*;";
+        }
         $response->headers->set('Content-Security-Policy', $csp);
 
         // X-Frame-Options
